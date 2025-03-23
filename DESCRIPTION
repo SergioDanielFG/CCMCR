@@ -1,0 +1,22 @@
+Package: CCMCR
+Title: Multivariate Chi-Square and Robust Covariance Control Chart
+    (CC-MCR)
+Version: 0.1.0
+Authors@R: c(
+    person("Sergio Daniel", "Frutos Galarza", , "sergio_dan88@hotmail.com", role = c("aut", "cre")),
+    person("Omar", "Ruiz Barzola", , "oruiz@espol.edu.ec", role = "aut"),
+    person("Purificación", "Galindo Villardón", , "pgalindo@usal.es", role = "aut")
+  )
+Description: The CC-MCR is a multivariate control chart designed to
+    monitor processes with multiple interrelated variables. Unlike
+    traditional charts, this approach uses a QQ statistic based on the
+    chi-square distribution and employs robust estimators to handle
+    outliers and non-normal data.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports: dplyr, MASS
+Depends: 
+    R (>= 3.5)
