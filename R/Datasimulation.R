@@ -26,44 +26,48 @@
 #' @examples
 #' data <- simulate_pharma_batches()
 #' head(data)
-simulate_pharma_batches <- function(num_lotes_control = 10, num_lotes_fuera_control = 2, obs_por_lote = 10) {
+simulate_pharma_batches <- function(num_lotes_control = 10,
+                                    num_lotes_fuera_control = 2,
+                                    obs_por_lote = 10) {
 
-##  Mean and covariance for in-control batches
-
+  # Mean and covariance for in-control batches
   mu_control <- c(98, 2.5, 300, 0.5)
   sigma_control <- matrix(c(2.0, 0.2, -5.0, 0.1,
                             0.2, 0.5, -2.0, 0.05,
                             -5.0, -2.0, 50.0, -0.5,
-                            0.1, 0.05, -0.5, 0.02), nrow = 4, byrow = TRUE)
+                            0.1, 0.05, -0.5, 0.02),
+                          nrow = 4, byrow = TRUE)
 
-  ##Generate in-control data
-
+  # Generate in-control data
   control_data <- dplyr::bind_rows(lapply(1:num_lotes_control, function(batch) {
-    data.frame(Batch = paste0("Batch_", batch),
-               Status = "Under Control",
-               MASS::mvrnorm(obs_por_lote, mu_control, sigma_control))
+    data.frame(
+      Batch = paste0("Batch_", batch),
+      Status = "Under Control",
+      MASS::mvrnorm(obs_por_lote, mu_control, sigma_control)
+    )
   }))
 
-  ##Mean and covariance for out-of-control batches
-
+  # Mean and covariance for out-of-control batches
   mu_out <- c(95, 4.0, 380, 0.4)
   sigma_out <- sigma_control * 1.5
 
-  ##Generate out-of-control data (ensuring unique batch names)
+  # Generate out-of-control data
+  out_data <- dplyr::bind_rows(lapply(
+    (num_lotes_control + 1):(num_lotes_control + num_lotes_fuera_control),
+    function(batch) {
+      data.frame(
+        Batch = paste0("Batch_", batch),
+        Status = "Out of Control",
+        MASS::mvrnorm(obs_por_lote, mu_out, sigma_out)
+      )
+    }
+  ))
 
-  out_data <- dplyr::bind_rows(lapply((num_lotes_control + 1):(num_lotes_control + num_lotes_fuera_control), function(batch) {
-    data.frame(Batch = paste0("Batch_", batch),
-               Status = "Out of Control",
-               MASS::mvrnorm(obs_por_lote, mu_out, sigma_out))
-  }))
-
-  ##Combine datasets
-
+  # Combine datasets
   datos <- dplyr::bind_rows(control_data, out_data)
   colnames(datos)[3:6] <- c("Concentration", "Humidity", "Dissolution", "Density")
 
- ## Format Status as factor
-
+  # Format Status as factor
   datos$Status <- factor(datos$Status, levels = c("Under Control", "Out of Control"))
 
   return(datos)
