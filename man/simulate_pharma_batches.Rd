@@ -11,28 +11,29 @@ simulate_pharma_batches(
 )
 }
 \arguments{
-\item{num_lotes_control}{Number of in-control batches (default: 10).}
+\item{num_lotes_control}{Integer. Number of in-control batches to simulate. Default is 10.}
 
-\item{num_lotes_fuera_control}{Number of out-of-control batches (default: 2).}
+\item{num_lotes_fuera_control}{Integer. Number of out-of-control batches to simulate. Default is 2.}
 
-\item{obs_por_lote}{Number of observations per batch (default: 10).}
+\item{obs_por_lote}{Integer. Number of observations (samples) per batch. Default is 10.}
 }
 \value{
-A data frame with the following variables:
+A data frame with the following columns:
 \describe{
-\item{Batch}{Batch identifier}
-\item{Status}{"Under Control" or "Out of Control"}
-\item{Concentration}{Quality variable}
-\item{Humidity}{Quality variable}
-\item{Dissolution}{Quality variable}
-\item{Density}{Quality variable}
+\item{Batch}{Factor indicating the batch number (e.g., Batch_1, Batch_2, ...)}
+\item{Status}{Factor indicating whether the batch is "Under Control" or "Out of Control"}
+\item{Concentration}{Simulated concentration values}
+\item{Humidity}{Simulated humidity values}
+\item{Dissolution}{Simulated dissolution values}
+\item{Density}{Simulated density values}
 }
 }
 \description{
-This function generates simulated pharmaceutical process data,
-including in-control and out-of-control batches with 4 quality variables.
+This function generates simulated data for a pharmaceutical manufacturing process.
+It includes both in-control and out-of-control batches with 4 continuous quality variables:
+Concentration, Humidity, Dissolution, and Density.
 }
 \examples{
-datos <- simulate_pharma_batches()
-head(datos)
+data <- simulate_pharma_batches()
+head(data)
 }
