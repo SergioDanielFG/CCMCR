@@ -10,10 +10,19 @@
 #' \describe{
 #'   \item{Batch}{Batch identifier}
 #'   \item{Status}{"Under Control" or "Out of Control"}
-#'   \item{Concentration}{Quantitative quality variable}
-#'   \item{Humidity}{Quantitative quality variable}
-#'   \item{Dissolution}{Quantitative quality variable}
-#'   \item{Density}{Quantitative quality variable}
+#'   \item{Concentration}{Quantitative quality variable (mg/mL)}
+#'   \item{Humidity}{Quantitative quality variable (% w/w)}
+#'   \item{Dissolution}{Quantitative quality variable (seconds)}
+#'   \item{Density}{Quantitative quality variable (g/cm\textsuperscript{3})}
 #' }
+#'
 #' @source Simulated using \code{simulate_pharma_batches()} from the CCMCR package.
+#'
+#' @usage data("datos_farma")
+#'
+#' @examples
+#' data("datos_farma")
+#' head(datos_farma)
+#' summary(datos_farma)
+#' table(datos_farma$Status)
 "datos_farma"
