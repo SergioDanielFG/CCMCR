@@ -5,15 +5,7 @@
 \alias{datos_farma}
 \title{Simulated Pharmaceutical Process Data}
 \format{
-A data frame with 120 rows and 6 variables:
-\describe{
-\item{Batch}{Batch identifier}
-\item{Status}{"Under Control" or "Out of Control"}
-\item{Concentration}{Quantitative quality variable (mg/mL)}
-\item{Humidity}{Quantitative quality variable (\% w/w)}
-\item{Dissolution}{Quantitative quality variable (seconds)}
-\item{Density}{Quantitative quality variable (g/cm\textsuperscript{3})}
-}
+An object of class \code{data.frame} with 120 rows and 6 columns.
 }
 \source{
 Simulated using \code{simulate_pharma_batches()} from the CCMCR package.
@@ -28,6 +20,16 @@ including 10 in-control batches and 2 out-of-control batches.
 \details{
 Each batch contains 10 observations and 4 quality control variables:
 Concentration, Humidity, Dissolution, and Density.
+
+#' @format A data frame with 120 rows and 6 variables:
+\describe{
+\item{Batch}{Batch identifier}
+\item{Status}{"Under Control" or "Out of Control"}
+\item{Concentration}{Quantitative quality variable (mg/mL)}
+\item{Humidity}{Quantitative quality variable (\% w/w)}
+\item{Dissolution}{Quantitative quality variable (seconds)}
+\item{Density}{Quantitative quality variable (g/cm^3)}
+}
 }
 \examples{
 data("datos_farma")

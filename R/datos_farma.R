@@ -6,15 +6,16 @@
 #' Each batch contains 10 observations and 4 quality control variables:
 #' Concentration, Humidity, Dissolution, and Density.
 #'
-#' @format A data frame with 120 rows and 6 variables:
+#'#' @format A data frame with 120 rows and 6 variables:
 #' \describe{
 #'   \item{Batch}{Batch identifier}
 #'   \item{Status}{"Under Control" or "Out of Control"}
 #'   \item{Concentration}{Quantitative quality variable (mg/mL)}
 #'   \item{Humidity}{Quantitative quality variable (% w/w)}
 #'   \item{Dissolution}{Quantitative quality variable (seconds)}
-#'   \item{Density}{Quantitative quality variable (g/cm\textsuperscript{3})}
+#'   \item{Density}{Quantitative quality variable (g/cm^3)}
 #' }
+
 #'
 #' @source Simulated using \code{simulate_pharma_batches()} from the CCMCR package.
 #'
