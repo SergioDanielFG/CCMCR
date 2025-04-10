@@ -22,18 +22,20 @@ plot_statis_phase1_chart <- function(phase1_result) {
   chi_threshold <- qchisq(0.9973, df = num_vars * 10)
 
   ggplot(df, aes(x = Batch, y = Chi2_Stat, group = 1)) +
-    geom_point(size = 2) +
-    geom_line() +
-    geom_hline(yintercept = chi_threshold, linetype = "dashed", color = "red") +
+    geom_point(size = 3, color = "#0072B2") +
+    geom_line(color = "#0072B2", linewidth = 0.8) +
+    geom_hline(yintercept = chi_threshold, linetype = "dashed", color = "red", linewidth = 0.8) +
     labs(
       title = "Robust STATIS Dual Control Chart - Phase 1",
       x = "Batch",
       y = "Chi-Squared Statistic"
     ) +
-    theme_minimal() +
+    theme_minimal(base_size = 13) +
     theme(
-      plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
-      axis.title = element_text(size = 12),
-      axis.text = element_text(size = 10)
+      plot.title = element_text(face = "bold", size = 16, hjust = 0.5),
+      axis.title = element_text(size = 13),
+      axis.text = element_text(size = 11)
     )
 }
+
+utils::globalVariables(c("Batch", "Chi2_Stat"))

@@ -8,6 +8,7 @@
 #' @return A ggplot2 object.
 #' @export
 #' @import ggplot2
+#' @importFrom scales label_comma
 #'
 #' @examples
 #' data <- simulate_pharma_batches()
@@ -23,6 +24,7 @@
 #'   compromise_matrix = phase1$compromise_matrix,
 #'   global_center = phase1$global_center)
 #' plot_statis_phase2_chart(phase1, phase2)
+
 plot_statis_phase2_chart <- function(phase1_result, phase2_result) {
   df1 <- phase1_result$batch_statistics
   df2 <- phase2_result$chi_stats_by_batch
@@ -30,19 +32,23 @@ plot_statis_phase2_chart <- function(phase1_result, phase2_result) {
   df1$Status <- "Under Control"
   df2$Status <- "Out of Control"
 
-  # Igualar columnas
   df1 <- df1[, c("Batch", "Chi2_Stat", "Status")]
   df2 <- df2[, c("Batch", "Robust_STATIS_Distance", "Status")]
   colnames(df2)[colnames(df2) == "Robust_STATIS_Distance"] <- "Chi2_Stat"
 
   combined <- rbind(df1, df2)
+  combined$Batch <- factor(combined$Batch, levels = unique(combined$Batch))
 
   ggplot(combined, aes(x = Batch, y = Chi2_Stat, color = Status, group = Status)) +
     geom_point(size = 3) +
     geom_line() +
     geom_hline(yintercept = phase2_result$threshold, linetype = "dashed", color = "red") +
-    labs(title = "Robust STATIS Dual Control Chart - Phase 2",
-         x = "Batch", y = "Chi-Squared Statistic") +
+    scale_y_log10(labels = scales::label_comma()) +
+    labs(
+      title = "Robust STATIS Dual Control Chart - Phase 2",
+      x = "Batch",
+      y = "Chi-Squared Statistic (log scale)"
+    ) +
     theme_minimal() +
     theme(
       plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
@@ -50,3 +56,6 @@ plot_statis_phase2_chart <- function(phase1_result, phase2_result) {
       axis.text = element_text(size = 10)
     )
 }
+
+# Evita nota de CMD check
+utils::globalVariables(c("Status", "Batch", "Chi2_Stat"))
