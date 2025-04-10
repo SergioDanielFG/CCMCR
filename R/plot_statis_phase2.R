@@ -38,6 +38,7 @@ plot_statis_phase2_chart <- function(phase1_result, phase2_result) {
 
   combined <- rbind(df1, df2)
   combined$Batch <- factor(combined$Batch, levels = unique(combined$Batch))
+  separation_index <- length(unique(df1$Batch)) + 0.5
 
   ggplot(combined, aes(x = Batch, y = Chi2_Stat, color = Status, group = Status)) +
     geom_point(size = 3) +

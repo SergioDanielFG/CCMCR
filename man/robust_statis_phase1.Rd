@@ -16,17 +16,20 @@ A list containing:
 \describe{
 \item{compromise_matrix}{The compromise matrix (robust)}
 \item{global_center}{Global robust center}
-\item{global_medians}{Global medians per variable}
-\item{global_mads}{Global MADs per variable}
 \item{batch_statistics}{Data frame with Batch, Chi2_Stat and Weight}
+\item{batch_medians}{Named list of per-batch medians per variable}
+\item{batch_mads}{Named list of per-batch MADs per variable}
+\item{global_medians}{Global medians per variable (for phase 2)}
+\item{global_mads}{Global MADs per variable (for phase 2)}
 }
 }
 \description{
-Applies robust STATIS Dual methodology to Phase 1 data (under control batches).
+Applies robust STATIS Dual methodology to Phase 1 data (under control batches),
+using robust standardization (median and MAD) by batch.
 }
 \examples{
 data <- simulate_pharma_batches()
 result <- robust_statis_phase1(
-  data,
+  data[data$Status == "Under Control", ],
   variables = c("Concentration", "Humidity", "Dissolution", "Density"))
 }
