@@ -7,24 +7,29 @@
 plot_statis_phase2_chart(phase1_result, phase2_result)
 }
 \arguments{
-\item{phase1_result}{List from robust_statis_phase1().}
+\item{phase1_result}{A list returned by \code{robust_statis_phase1()}, which includes
+\code{batch_statistics} with Chi-squared values for Phase 1 batches.}
 
-\item{phase2_result}{List from robust_statis_phase2().}
+\item{phase2_result}{A list returned by \code{robust_statis_phase2()}, including
+\code{chi_stats_by_batch} with aggregated Mahalanobis distances and a control \code{threshold}.}
 }
 \value{
-A ggplot2 object.
+A ggplot2 object representing the control chart, where each point corresponds to
+a batch and its summed Mahalanobis distance; includes a control threshold line.
 }
 \description{
-Plots the Chi-squared statistics for both Phase 1 and Phase 2 batches.
+Plots the Chi-squared statistics for both Phase 1 and Phase 2 batches,
+using the \strong{sum of robust Mahalanobis distances per batch}.
+Batches from Phase 1 are considered "under control", and batches from Phase 2
+are typically "out of control" candidates.
 }
 \examples{
-data <- simulate_pharma_batches()
+data("datos_farma")
 phase1 <- robust_statis_phase1(
-  data[data$Status == "Under Control", ],
+  subset(datos_farma, Status == "Under Control"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density"))
-new_data <- subset(data, Status == "Out of Control")
 phase2 <- robust_statis_phase2(
-  new_data = new_data,
+  new_data = subset(datos_farma, Status == "Out of Control"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density"),
   medians = phase1$global_medians,
   mads = phase1$global_mads,

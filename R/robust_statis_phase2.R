@@ -1,7 +1,10 @@
 #' Robust STATIS Dual - Phase 2 (New Batches Evaluation)
 #'
 #' Applies the robust STATIS control chart methodology to new batches using the compromise matrix
-#' and robust global center obtained in Phase 1.
+#' and robust global center obtained in Phase 1. This function computes robust Mahalanobis distances
+#' for each observation in new batches (Phase 2), standardizes the data using robust estimates
+#' (median and MAD) from Phase 1, and then aggregates the distances per batch as the sum of squared
+#' distances. This sum serves as the Phase 2 control statistic.
 #'
 #' @param new_data A data frame containing new batches to evaluate (usually out-of-control).
 #' @param variables Character vector of variable names to use.
@@ -12,19 +15,26 @@
 #'
 #' @return A list with:
 #' \describe{
-#'   \item{standardized_data}{Data frame with standardized values and distances.}
-#'   \item{chi_stats_by_batch}{Chi-square statistics aggregated by batch.}
-#'   \item{threshold}{Chi-square threshold used.}
+#'   \item{standardized_data}{Data frame with standardized values and distances per observation.}
+#'   \item{chi_stats_by_batch}{Chi-squared statistics per batch, calculated as the sum of squared distances.}
+#'   \item{threshold}{Chi-squared control limit based on degrees of freedom = number of variables * number of observations per batch.}
 #' }
+#'
+#' @details
+#' This approach is aligned with Phase 1 methodology, where each batch is evaluated using the
+#' total contribution of its observations. The Mahalanobis distances are computed with respect
+#' to the global robust center and the compromise matrix obtained in Phase 1.
+#'
 #' @export
-#' @importFrom stats mahalanobis median mad aggregate
+#' @importFrom stats mahalanobis qchisq aggregate
 #'
 #' @examples
-#' data <- simulate_pharma_batches()
+#' data("datos_farma")
 #' phase1 <- robust_statis_phase1(
-#' data,
-#' variables = c("Concentration", "Humidity", "Dissolution", "Density"))
-#' new_data <- subset(data, Status == "Out of Control")
+#'   subset(datos_farma, Status == "Under Control"),
+#'   variables = c("Concentration", "Humidity", "Dissolution", "Density")
+#' )
+#' new_data <- subset(datos_farma, Status == "Out of Control")
 #' result_phase2 <- robust_statis_phase2(
 #'   new_data = new_data,
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density"),
@@ -33,6 +43,7 @@
 #'   compromise_matrix = phase1$compromise_matrix,
 #'   global_center = phase1$global_center
 #' )
+#' result_phase2$chi_stats_by_batch  # Quick view
 robust_statis_phase2 <- function(new_data,
                                  variables,
                                  medians,

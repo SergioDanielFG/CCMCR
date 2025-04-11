@@ -2,25 +2,50 @@
 % Please edit documentation in R/plot_statis_biplot.R
 \name{plot_statis_biplot}
 \alias{plot_statis_biplot}
-\title{Biplot of Robust STATIS Dual Compromise}
+\title{GH-Biplot of Robust STATIS Dual Compromise (Galindo-Hernández Biplot)}
 \usage{
-plot_statis_biplot(phase1_result, dims = c(1, 2))
+plot_statis_biplot(
+  phase1_result,
+  dims = c(1, 2),
+  color_by = c("none", "weight", "distance"),
+  highlight_batches = NULL
+)
 }
 \arguments{
-\item{phase1_result}{Result from \code{robust_statis_phase1()}, must include \code{compromise_matrix} and \code{robust_means}.}
+\item{phase1_result}{Result from \code{robust_statis_phase1()}, must include \code{compromise_matrix},
+\code{robust_means}, and \code{batch_statistics}.}
 
-\item{dims}{Integer vector of length 2 indicating the dimensions to plot (default: c(1, 2)).}
+\item{dims}{Dimensions to plot (default: c(1, 2)).}
+
+\item{color_by}{Optional: "none" (default), "weight" (from STATIS), or "distance".}
+
+\item{highlight_batches}{Optional: Vector of batch names to highlight.}
 }
 \value{
-A ggplot2 object representing the biplot.
+A ggplot2 object representing the GH-Biplot.
 }
 \description{
-Generates a biplot using the compromise matrix from STATIS Dual analysis. Projects the robust batch centers and variable axes onto the principal dimensions of the compromise.
+Generates a GH-Biplot (Galindo-Hernández) using the compromise matrix obtained
+from robust STATIS Dual. It represents variables as vectors and batch centers as points.
+}
+\details{
+This is the most common form of biplot used in multivariate analysis (PCA, STATIS).
 }
 \examples{
-data <- simulate_pharma_batches()
+data("datos_farma")
 phase1 <- robust_statis_phase1(
-  data[data$Status == "Under Control", ],
+  subset(datos_farma, Status == "Under Control"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density"))
+
+# Basic GH-Biplot
 plot_statis_biplot(phase1)
+
+# Colored by STATIS weights
+plot_statis_biplot(phase1, color_by = "weight")
+
+# Colored by Chi² distance
+plot_statis_biplot(phase1, color_by = "distance")
+
+# Highlight specific batches
+plot_statis_biplot(phase1, highlight_batches = c("Batch_7", "Batch_10"))
 }

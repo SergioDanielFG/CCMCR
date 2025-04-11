@@ -28,8 +28,10 @@ Applies robust STATIS Dual methodology to Phase 1 data (under control batches),
 using robust standardization (median and MAD) by batch.
 }
 \examples{
-data <- simulate_pharma_batches()
+data("datos_farma")
 result <- robust_statis_phase1(
-  data[data$Status == "Under Control", ],
-  variables = c("Concentration", "Humidity", "Dissolution", "Density"))
+  subset(datos_farma, Status == "Under Control"),
+  variables = c("Concentration", "Humidity", "Dissolution", "Density")
+)
+result$compromise_matrix
 }

@@ -1,23 +1,28 @@
 #' Plot STATIS Dual Robust Control Chart - Phase 2 (All Batches)
 #'
-#' Plots the Chi-squared statistics for both Phase 1 and Phase 2 batches.
+#' Plots the Chi-squared statistics for both Phase 1 and Phase 2 batches,
+#' using the **sum of robust Mahalanobis distances per batch**.
+#' Batches from Phase 1 are considered "under control", and batches from Phase 2
+#' are typically "out of control" candidates.
 #'
-#' @param phase1_result List from robust_statis_phase1().
-#' @param phase2_result List from robust_statis_phase2().
+#' @param phase1_result A list returned by `robust_statis_phase1()`, which includes
+#' `batch_statistics` with Chi-squared values for Phase 1 batches.
 #'
-#' @return A ggplot2 object.
+#' @param phase2_result A list returned by `robust_statis_phase2()`, including
+#' `chi_stats_by_batch` with aggregated Mahalanobis distances and a control `threshold`.
+#'
+#' @return A ggplot2 object representing the control chart, where each point corresponds to
+#' a batch and its summed Mahalanobis distance; includes a control threshold line.
 #' @export
 #' @import ggplot2
-#' @importFrom scales label_comma
 #'
 #' @examples
-#' data <- simulate_pharma_batches()
+#' data("datos_farma")
 #' phase1 <- robust_statis_phase1(
-#'   data[data$Status == "Under Control", ],
+#'   subset(datos_farma, Status == "Under Control"),
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density"))
-#' new_data <- subset(data, Status == "Out of Control")
 #' phase2 <- robust_statis_phase2(
-#'   new_data = new_data,
+#'   new_data = subset(datos_farma, Status == "Out of Control"),
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density"),
 #'   medians = phase1$global_medians,
 #'   mads = phase1$global_mads,
@@ -38,17 +43,15 @@ plot_statis_phase2_chart <- function(phase1_result, phase2_result) {
 
   combined <- rbind(df1, df2)
   combined$Batch <- factor(combined$Batch, levels = unique(combined$Batch))
-  separation_index <- length(unique(df1$Batch)) + 0.5
 
-  ggplot(combined, aes(x = Batch, y = Chi2_Stat, color = Status, group = Status)) +
+  ggplot(combined, aes(x = Batch, y = Chi2_Stat, color = Status, group = 1)) +
     geom_point(size = 3) +
     geom_line() +
     geom_hline(yintercept = phase2_result$threshold, linetype = "dashed", color = "red") +
-    scale_y_log10(labels = scales::label_comma()) +
     labs(
-      title = "Robust STATIS Dual Control Chart - Phase 2",
+      title = "Robust STATIS Dual Control Chart - All Batches",
       x = "Batch",
-      y = "Chi-Squared Statistic (log scale)"
+      y = "Chi-Squared Statistic"
     ) +
     theme_minimal() +
     theme(
@@ -57,6 +60,4 @@ plot_statis_phase2_chart <- function(phase1_result, phase2_result) {
       axis.text = element_text(size = 10)
     )
 }
-
-# Evita nota de CMD check
 utils::globalVariables(c("Status", "Batch", "Chi2_Stat"))

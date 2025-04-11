@@ -21,8 +21,7 @@ Imports:
     dplyr,
     MASS,
     ggplot2,
-    rrcov,
-    scales
+    rrcov
 Depends: 
     R (>= 3.5)
 URL: https://github.com/SergioDanielFG/CCMCR

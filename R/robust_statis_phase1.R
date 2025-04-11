@@ -21,10 +21,12 @@
 #' @export
 #'
 #' @examples
-#' data <- simulate_pharma_batches()
+#' data("datos_farma")
 #' result <- robust_statis_phase1(
-#'   data[data$Status == "Under Control", ],
-#'   variables = c("Concentration", "Humidity", "Dissolution", "Density"))
+#'   subset(datos_farma, Status == "Under Control"),
+#'   variables = c("Concentration", "Humidity", "Dissolution", "Density")
+#' )
+#' result$compromise_matrix
 robust_statis_phase1 <- function(data, variables) {
   batches <- unique(data$Batch)
   p <- length(variables)
@@ -105,6 +107,10 @@ robust_statis_phase1 <- function(data, variables) {
   # Cálculo adicional para Fase 2
   global_medians <- apply(data[, variables], 2, median)
   global_mads <- apply(data[, variables], 2, mad, constant = 1)
+  # Calcular distancias robustas de Mahalanobis por observación
+  X <- as.matrix(standardized_data[, variables])
+  distances <- mahalanobis(X, center = global_center, cov = compromise_matrix)
+  standardized_data$Robust_STATIS_Distance <- distances
 
   return(list(
     compromise_matrix = compromise_matrix,
@@ -114,6 +120,7 @@ robust_statis_phase1 <- function(data, variables) {
     batch_mads = batch_mads,
     global_medians = global_medians,
     global_mads = global_mads,
-    robust_means = robust_means
+    robust_means = robust_means,
+    standardized_data = standardized_data
   ))
 }
