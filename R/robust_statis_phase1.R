@@ -27,6 +27,7 @@
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 #' )
 #' result$compromise_matrix
+
 robust_statis_phase1 <- function(data, variables) {
   batches <- unique(data$Batch)
   p <- length(variables)
@@ -91,26 +92,28 @@ robust_statis_phase1 <- function(data, variables) {
   # Centro robusto global
   global_center <- Reduce("+", Map(function(w, mu) w * mu, weights, robust_means))
 
-  # Estadísticos Chi² por lote
-  chi2_stats <- sapply(valid_batches, function(batch) {
-    mu <- robust_means[[batch]]
-    mahalanobis(mu, global_center, compromise_matrix)
-  })
-
-  # Tabla de estadísticas por lote
-  batch_statistics <- data.frame(
-    Batch = factor(valid_batches, levels = sort(valid_batches)),
-    Chi2_Stat = chi2_stats,
-    Weight = weights[valid_batches]
-  )
-
-  # Cálculo adicional para Fase 2
-  global_medians <- apply(data[, variables], 2, median)
-  global_mads <- apply(data[, variables], 2, mad, constant = 1)
   # Calcular distancias robustas de Mahalanobis por observación
   X <- as.matrix(standardized_data[, variables])
   distances <- mahalanobis(X, center = global_center, cov = compromise_matrix)
   standardized_data$Robust_STATIS_Distance <- distances
+
+  # NUEVO: Estadísticos Chi² por lote como suma de distancias por observación
+  chi2_by_batch <- aggregate(
+    Robust_STATIS_Distance ~ Batch,
+    data = standardized_data,
+    FUN = sum
+  )
+  colnames(chi2_by_batch)[2] <- "Chi2_Stat"
+
+  # Añadir pesos al resultado
+  chi2_by_batch$Weight <- weights[as.character(chi2_by_batch$Batch)]
+
+  # Ordenar resultados
+  batch_statistics <- chi2_by_batch
+
+  # Mediana y MAD global para fase 2
+  global_medians <- apply(data[, variables], 2, median)
+  global_mads <- apply(data[, variables], 2, mad, constant = 1)
 
   return(list(
     compromise_matrix = compromise_matrix,

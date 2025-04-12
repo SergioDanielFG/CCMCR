@@ -1,10 +1,10 @@
-#' Plot Control Chart - Sum of Robust Mahalanobis Distances (Phase 1)
+#' Plot Control Chart - Robust STATIS Dual (Phase 1)
 #'
-#' Generates a control chart using the **sum** of robust Mahalanobis distances for each batch,
-#' based on the output from `robust_statis_phase1()`.
+#' Plots the Chi-squared statistic per batch based on the **sum of robust Mahalanobis distances**
+#' calculated in `robust_statis_phase1()`.
 #'
-#' @param chi_sum_df A data frame with columns `Batch` and `Robust_STATIS_Distance`,
-#'                   usually obtained by aggregating `phase1_result$standardized_data`.
+#' @param batch_statistics A data frame with columns `Batch` and `Chi2_Stat`,
+#'                         typically from `phase1_result$batch_statistics`.
 #' @param num_vars Integer. Number of variables used in the multivariate analysis (to compute the Chi² threshold).
 #' @param title Optional string. Plot title.
 #'
@@ -20,21 +20,30 @@
 #'   subset(datos_farma, Status == "Under Control"),
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 #' )
-#' chi_sum_df <- aggregate(Robust_STATIS_Distance ~ Batch,
-#'                         data = phase1_result$standardized_data, sum)
-#' plot_statis_phase1_chart_sum(chi_sum_df, num_vars = 4)
+#' plot_statis_phase1_chart(phase1_result$batch_statistics, num_vars = 4)
 
-plot_statis_phase1_chart_sum <- function(chi_sum_df, num_vars, title = "Robust STATIS Dual Control Chart - Phase 1 ") {
+plot_statis_phase1_chart <- function(batch_statistics, num_vars, title = "Robust STATIS Dual Control Chart - Phase 1") {
+  # Supone 10 observaciones por lote
   chi_threshold <- qchisq(0.9973, df = num_vars * 10)
 
-  ggplot(chi_sum_df, aes(x = Batch, y = Robust_STATIS_Distance, group = 1)) +
+  ggplot(batch_statistics, aes(x = Batch, y = Chi2_Stat, group = 1)) +
     geom_point(size = 3, color = "#0072B2") +
     geom_line(color = "#0072B2", linewidth = 0.8) +
+
+    # ➕ Etiquetas sobre cada punto
+    geom_text(
+      aes(label = round(Chi2_Stat, 1)),
+      color = "black",
+      vjust = -0.8,
+      size = 3.2,
+      show.legend = FALSE
+    ) +
+
     geom_hline(yintercept = chi_threshold, linetype = "dashed", color = "red", linewidth = 0.8) +
     labs(
       title = title,
       x = "Batch",
-      y = "Chi-Squared Statistic "
+      y = expression(chi^2 ~ "(Sum of Robust Distances)")
     ) +
     theme_minimal(base_size = 13) +
     theme(
@@ -44,4 +53,4 @@ plot_statis_phase1_chart_sum <- function(chi_sum_df, num_vars, title = "Robust S
     )
 }
 
-utils::globalVariables("Robust_STATIS_Distance")
+utils::globalVariables(c("Chi2_Stat", "Batch"))

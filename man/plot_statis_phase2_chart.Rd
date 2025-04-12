@@ -4,7 +4,11 @@
 \alias{plot_statis_phase2_chart}
 \title{Plot STATIS Dual Robust Control Chart - Phase 2 (All Batches)}
 \usage{
-plot_statis_phase2_chart(phase1_result, phase2_result)
+plot_statis_phase2_chart(
+  phase1_result,
+  phase2_result,
+  title = "Robust STATIS Dual Control Chart - All Batches"
+)
 }
 \arguments{
 \item{phase1_result}{A list returned by \code{robust_statis_phase1()}, which includes
@@ -12,10 +16,11 @@ plot_statis_phase2_chart(phase1_result, phase2_result)
 
 \item{phase2_result}{A list returned by \code{robust_statis_phase2()}, including
 \code{chi_stats_by_batch} with aggregated Mahalanobis distances and a control \code{threshold}.}
+
+\item{title}{Optional string. Plot title.}
 }
 \value{
-A ggplot2 object representing the control chart, where each point corresponds to
-a batch and its summed Mahalanobis distance; includes a control threshold line.
+A ggplot2 object representing the control chart.
 }
 \description{
 Plots the Chi-squared statistics for both Phase 1 and Phase 2 batches,
@@ -27,13 +32,17 @@ are typically "out of control" candidates.
 data("datos_farma")
 phase1 <- robust_statis_phase1(
   subset(datos_farma, Status == "Under Control"),
-  variables = c("Concentration", "Humidity", "Dissolution", "Density"))
+  variables = c("Concentration", "Humidity", "Dissolution", "Density")
+)
+
 phase2 <- robust_statis_phase2(
   new_data = subset(datos_farma, Status == "Out of Control"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density"),
   medians = phase1$global_medians,
   mads = phase1$global_mads,
   compromise_matrix = phase1$compromise_matrix,
-  global_center = phase1$global_center)
+  global_center = phase1$global_center
+)
+
 plot_statis_phase2_chart(phase1, phase2)
 }

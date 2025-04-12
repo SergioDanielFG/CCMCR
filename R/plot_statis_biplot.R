@@ -60,6 +60,8 @@ plot_statis_biplot <- function(phase1_result,
 
   df_batches <- as.data.frame(projected_centers)
   df_batches$Batch <- rownames(df_batches)
+  df_batches$Batch <- factor(df_batches$Batch, levels = phase1_result$batch_statistics$Batch)
+
 
   var_explained <- round(100 * eig_values[dims] / sum(eig_values), 1)
 
@@ -76,6 +78,7 @@ plot_statis_biplot <- function(phase1_result,
   }
 
   df_batches$Size <- ifelse(df_batches$Batch %in% highlight_batches, 4, 2.5)
+
 
   g <- ggplot() +
     geom_segment(data = df_vars,
