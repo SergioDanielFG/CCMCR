@@ -57,20 +57,24 @@ plot_statis_phase2_chart <- function(phase1_result, phase2_result,
     geom_text(
       data = subset(combined, Status == "Under Control"),
       aes(label = round(Chi2_Stat, 1)),
-      color = "black",
-      vjust = -0.8, size = 3.2, show.legend = FALSE
+      color = "black", vjust = -0.8, size = 3.2, show.legend = FALSE
     ) +
 
     # Etiquetas para lotes fuera de control
     geom_text(
       data = subset(combined, Status == "Out of Control"),
       aes(label = round(Chi2_Stat, 1)),
-      color = "#B22222",  # Rojo oscuro (Firebrick)
-      fontface = "bold",
+      color = "#B22222", fontface = "bold",
       vjust = -0.8, size = 3.5, show.legend = FALSE
     ) +
 
+    # Línea de umbral y etiqueta
     geom_hline(yintercept = phase2_result$threshold, linetype = "dashed", color = "red", linewidth = 0.8) +
+    annotate("text",
+             x = Inf, y = phase2_result$threshold,
+             label = paste0("UCL = ", round(phase2_result$threshold, 1)),
+             hjust = 1.2, vjust = -0.5, color = "red", size = 4) +
+
     labs(
       title = title,
       x = "Batch",

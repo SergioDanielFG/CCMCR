@@ -61,5 +61,5 @@ result_phase2 <- robust_statis_phase2(
   compromise_matrix = phase1$compromise_matrix,
   global_center = phase1$global_center
 )
-result_phase2$chi_stats_by_batch  # Quick view
+result_phase2$standardized_data
 }

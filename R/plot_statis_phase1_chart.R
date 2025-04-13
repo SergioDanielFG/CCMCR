@@ -30,7 +30,7 @@ plot_statis_phase1_chart <- function(batch_statistics, num_vars, title = "Robust
     geom_point(size = 3, color = "#0072B2") +
     geom_line(color = "#0072B2", linewidth = 0.8) +
 
-    # ➕ Etiquetas sobre cada punto
+    # etiquetas sobre cada punto
     geom_text(
       aes(label = round(Chi2_Stat, 1)),
       color = "black",
@@ -39,7 +39,13 @@ plot_statis_phase1_chart <- function(batch_statistics, num_vars, title = "Robust
       show.legend = FALSE
     ) +
 
+    # Línea de umbral + etiqueta del valor del umbral
     geom_hline(yintercept = chi_threshold, linetype = "dashed", color = "red", linewidth = 0.8) +
+    annotate("text",
+             x = Inf, y = chi_threshold,
+             label = paste0("UCL = ", round(chi_threshold, 1)),
+             hjust = 1.2, vjust = -0.5, color = "red", size = 4) +
+
     labs(
       title = title,
       x = "Batch",
