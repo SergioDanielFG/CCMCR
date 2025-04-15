@@ -27,6 +27,8 @@
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 #' )
 #' result$compromise_matrix
+#' result$batch_statistics
+#' result$standardized_data
 
 robust_statis_phase1 <- function(data, variables) {
   batches <- unique(data$Batch)

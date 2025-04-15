@@ -49,7 +49,7 @@ plot_statis_phase1_chart <- function(batch_statistics, num_vars, title = "Robust
     labs(
       title = title,
       x = "Batch",
-      y = expression(chi^2 ~ "(Sum of Robust Distances)")
+      y = expression(chi^2 ~ "(Sum of Squared Robust Mahalanobis Distances per Batch)")
     ) +
     theme_minimal(base_size = 13) +
     theme(

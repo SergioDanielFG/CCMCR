@@ -78,7 +78,7 @@ plot_statis_phase2_chart <- function(phase1_result, phase2_result,
     labs(
       title = title,
       x = "Batch",
-      y = expression(chi^2 ~ "(Sum of Robust Distances)")
+      y = expression(chi^2 ~ "(Sum of Squared Robust Mahalanobis Distances)")
     ) +
     theme_minimal(base_size = 13) +
     theme(

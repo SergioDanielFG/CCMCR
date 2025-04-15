@@ -34,4 +34,6 @@ result <- robust_statis_phase1(
   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 )
 result$compromise_matrix
+result$batch_statistics
+result$standardized_data
 }
