@@ -15,7 +15,7 @@ plot_statis_phase2_chart(
 \code{batch_statistics} with Chi-squared values for Phase 1 batches.}
 
 \item{phase2_result}{A list returned by \code{robust_statis_phase2()}, including
-\code{chi_stats_by_batch} with aggregated Mahalanobis distances and a control \code{threshold}.}
+\code{chi_stats_by_batch} with Hotelling T² values and a control \code{threshold}.}
 
 \item{title}{Optional string. Plot title.}
 }
@@ -24,20 +24,15 @@ A ggplot2 object representing the control chart.
 }
 \description{
 Plots the Chi-squared statistics for both Phase 1 and Phase 2 batches,
-using the \strong{sum of robust Mahalanobis distances per batch}.
-Batches from Phase 1 are considered "under control", and batches from Phase 2
-are typically "out of control" candidates.
+using the robust Hotelling T² statistic per batch. Batches from Phase 1 are assumed
+to be under control and those from Phase 2 are evaluated against the control threshold.
 }
 \examples{
 data("datos_farma")
-
-# Fase 1: entrenamiento con los 10 lotes bajo control
 phase1 <- robust_statis_phase1(
   subset(datos_farma, Fase == "Fase 1" & Status == "Under Control"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 )
-
-# Fase 2: evaluación de 7 lotes (4 bajo control y 3 fuera de control)
 phase2 <- robust_statis_phase2(
   new_data = subset(datos_farma, Fase == "Fase 2"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density"),
@@ -46,7 +41,5 @@ phase2 <- robust_statis_phase2(
   compromise_matrix = phase1$compromise_matrix,
   global_center = phase1$global_center
 )
-
-# Gráfico de control con los 17 lotes (10 de fase 1 y 7 de fase 2)
 plot_statis_phase2_chart(phase1, phase2)
 }

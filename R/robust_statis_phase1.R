@@ -1,7 +1,8 @@
 #' Robust STATIS Dual - Phase 1 (Under Control Batches)
 #'
 #' Applies robust STATIS Dual methodology to Phase 1 data (under control batches),
-#' using robust standardization (median and MAD) by batch.
+#' using robust standardization (median and MAD) by batch. Computes Hotelling-type T² statistics
+#' per batch using robust batch centers and the compromise matrix.
 #'
 #' @param data A data frame containing the process data with batch information.
 #' @param variables Character vector of column names to be used in the analysis.
@@ -16,7 +17,7 @@
 #'   \item{global_medians}{Global medians per variable (for phase 2)}
 #'   \item{global_mads}{Global MADs per variable (for phase 2)}
 #' }
-#' @importFrom stats median mad mahalanobis
+#' @importFrom stats median mad
 #' @importFrom rrcov CovMcd
 #' @export
 #'
@@ -95,24 +96,22 @@ robust_statis_phase1 <- function(data, variables) {
   # Centro robusto global
   global_center <- Reduce("+", Map(function(w, mu) w * mu, weights, robust_means))
 
-  # Calcular distancias robustas de Mahalanobis por observación
-  X <- as.matrix(standardized_data[, variables])
-  distances <- mahalanobis(X, center = global_center, cov = compromise_matrix)
-  standardized_data$Robust_STATIS_Distance <- distances
+  # Calcular estadístico T² robusto por lote (Hotelling-type)
+  chi2_stats <- data.frame(Batch = character(), Chi2_Stat = numeric(), Weight = numeric())
 
-  # NUEVO: Estadísticos Chi² por lote como suma de distancias por observación
-  chi2_by_batch <- aggregate(
-    Robust_STATIS_Distance ~ Batch,
-    data = standardized_data,
-    FUN = sum
-  )
-  colnames(chi2_by_batch)[2] <- "Chi2_Stat"
+  for (batch in valid_batches) {
+    n_b <- sum(data$Batch == batch)
+    x_b <- robust_means[[batch]]
+    diff <- x_b - global_center
+    T2_b <- n_b * t(diff) %*% solve(compromise_matrix) %*% diff
+    chi2_stats <- rbind(chi2_stats, data.frame(
+      Batch = batch,
+      Chi2_Stat = as.numeric(T2_b),
+      Weight = weights[batch]
+    ))
+  }
 
-  # Añadir pesos al resultado
-  chi2_by_batch$Weight <- weights[as.character(chi2_by_batch$Batch)]
-
-  # Ordenar resultados
-  batch_statistics <- chi2_by_batch
+  batch_statistics <- chi2_stats
 
   # Mediana y MAD global para fase 2
   global_medians <- apply(data[, variables], 2, median)
@@ -127,6 +126,7 @@ robust_statis_phase1 <- function(data, variables) {
     global_medians = global_medians,
     global_mads = global_mads,
     robust_means = robust_means,
-    standardized_data = standardized_data
+    standardized_data = standardized_data,
+    robust_covariances = cov_matrices
   ))
 }

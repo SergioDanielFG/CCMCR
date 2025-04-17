@@ -22,19 +22,16 @@ typically from \code{phase1_result$batch_statistics}.}
 A ggplot2 object.
 }
 \description{
-Plots the Chi-squared statistic per batch based on the \strong{sum of robust Mahalanobis distances}
-calculated in \code{robust_statis_phase1()}.
+Plots the Chi-squared statistic per batch using the robust Hotelling T² statistic
+calculated in \code{robust_statis_phase1()}. The control limit is based on a Chi-squared
+distribution with degrees of freedom equal to the number of variables.
 }
 \examples{
 data("datos_farma")
-
-# Filtrar lotes bajo control de la Fase 1
 phase1_result <- robust_statis_phase1(
   subset(datos_farma, Fase == "Fase 1" & Status == "Under Control"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 )
-
-# Graficar los estadísticos Chi² por lote
 plot_statis_phase1_chart(
   batch_statistics = phase1_result$batch_statistics,
   num_vars = 4

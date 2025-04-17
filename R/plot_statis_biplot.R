@@ -4,7 +4,7 @@
 #' from robust STATIS Dual. It represents variables as vectors and batch centers as points.
 #'
 #' @param phase1_result Result from `robust_statis_phase1()`, must include `compromise_matrix`,
-#'   `robust_means`, and `batch_statistics`.
+#'   `robust_means`, `batch_statistics`, and `global_center`.
 #' @param dims Dimensions to plot (default: c(1, 2)).
 #' @param color_by Optional: "none" (default), "weight" (from STATIS), or "distance".
 #' @param highlight_batches Optional: Vector of batch names to highlight.
@@ -17,11 +17,11 @@
 #' @importFrom ggrepel geom_text_repel
 #' @examples
 #' data("datos_farma")
-#' phase1 <- robust_statis_phase1(
+#' phase1_result <- robust_statis_phase1(
 #'   subset(datos_farma, Fase == "Fase 1" & Status == "Under Control"),
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 #' )
-#' plot_statis_biplot(phase1)
+#' plot_statis_biplot(phase1_result)
 
 plot_statis_biplot <- function(phase1_result,
                                dims = c(1, 2),
@@ -33,7 +33,7 @@ plot_statis_biplot <- function(phase1_result,
   compromise <- phase1_result$compromise_matrix
   centers <- do.call(rbind, phase1_result$robust_means)
   batches <- names(phase1_result$robust_means)
-  compromise_center <- phase1_result$global_center  # Es la proyección de la configuración compromiso
+  compromise_center <- phase1_result$global_center
 
   eig <- eigen(compromise)
   eig_vectors <- eig$vectors
@@ -45,10 +45,16 @@ plot_statis_biplot <- function(phase1_result,
   projected_centers <- as.matrix(centers) %*% eig_vectors[, dims]
   rownames(projected_centers) <- batches
 
+  projected_compromise <- as.numeric(compromise_center %*% eig_vectors[, dims])
+  df_compromise <- data.frame(V1 = projected_compromise[1],
+                              V2 = projected_compromise[2],
+                              Label = "Compromise")
+
   df_vars <- as.data.frame(variable_coords)
   df_vars$Variable <- rownames(df_vars)
 
   df_batches <- as.data.frame(projected_centers)
+  colnames(df_batches)[1:2] <- c("V1", "V2")
   df_batches$Batch <- rownames(df_batches)
   df_batches$Batch <- factor(df_batches$Batch, levels = phase1_result$batch_statistics$Batch)
 
@@ -72,25 +78,33 @@ plot_statis_biplot <- function(phase1_result,
     geom_hline(yintercept = 0, linetype = "solid", color = "grey30") +
     geom_vline(xintercept = 0, linetype = "solid", color = "grey30") +
 
-    # Flechas variables
+    # Flechas de variables
     geom_segment(data = df_vars,
                  aes(x = 0, y = 0, xend = V1 * 1.2, yend = V2 * 1.2),
                  arrow = arrow(length = unit(0.25, "cm")),
                  color = "brown", linewidth = 1) +
 
-    # Etiquetas variables
+    # Etiquetas de variables
     ggrepel::geom_text_repel(data = df_vars,
                              aes(x = V1 * 1.3, y = V2 * 1.3, label = Variable),
                              color = "brown", size = 4.5, fontface = "bold") +
 
-    # Puntos lotes
+    # Puntos de los lotes
     geom_point(data = df_batches,
                aes(x = V1, y = V2, color = Color, size = Size)) +
 
-    # Etiquetas lotes
+    # Etiquetas de los lotes
     ggrepel::geom_text_repel(data = df_batches,
                              aes(x = V1, y = V2, label = Batch),
                              size = 3, color = "black") +
+
+    # Centro compromiso
+    geom_point(data = df_compromise,
+               aes(x = V1, y = V2),
+               color = "red", shape = 21, fill = "red", size = 4, stroke = 1.2) +
+    geom_text(data = df_compromise,
+              aes(x = V1, y = V2, label = Label),
+              vjust = -1, color = "red", fontface = "bold", size = 4) +
 
     { if (color_by != "none") scale_color_viridis_c(name = color_by, option = "C", end = 0.9) else scale_color_identity() } +
     scale_size_identity() +
@@ -110,4 +124,4 @@ plot_statis_biplot <- function(phase1_result,
   return(g)
 }
 
-utils::globalVariables(c("V1", "V2", "Variable", "Color", "Batch", "Size"))
+utils::globalVariables(c("V1", "V2", "Variable", "Color", "Batch", "Size", "Label"))

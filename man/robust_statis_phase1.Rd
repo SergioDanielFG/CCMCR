@@ -25,7 +25,8 @@ A list containing:
 }
 \description{
 Applies robust STATIS Dual methodology to Phase 1 data (under control batches),
-using robust standardization (median and MAD) by batch.
+using robust standardization (median and MAD) by batch. Computes Hotelling-type T² statistics
+per batch using robust batch centers and the compromise matrix.
 }
 \examples{
 data("datos_farma")

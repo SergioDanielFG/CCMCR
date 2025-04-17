@@ -29,33 +29,22 @@ robust_statis_phase2(
 \value{
 A list with:
 \describe{
-\item{standardized_data}{Data frame with standardized values and distances per observation.}
-\item{chi_stats_by_batch}{Chi-squared statistics per batch, calculated as the sum of squared distances.}
-\item{threshold}{Chi-squared control limit based on degrees of freedom = number of variables * number of observations per batch.}
+\item{standardized_data}{Data frame with standardized values.}
+\item{chi_stats_by_batch}{Chi-squared statistics per batch using Hotelling-type T² formulation.}
+\item{threshold}{Chi-squared control limit based on degrees of freedom = number of variables.}
 }
 }
 \description{
 Applies the robust STATIS control chart methodology to new batches using the compromise matrix
-and robust global center obtained in Phase 1. This function computes robust Mahalanobis distances
-for each observation in new batches (Phase 2), standardizes the data using robust estimates
-(median and MAD) from Phase 1, and then aggregates the distances per batch as the sum of squared
-distances. This sum serves as the Phase 2 control statistic.
-}
-\details{
-This approach is aligned with Phase 1 methodology, where each batch is evaluated using the
-total contribution of its observations. The Mahalanobis distances are computed with respect
-to the global robust center and the compromise matrix obtained in Phase 1.
+and robust global center obtained in Phase 1. Each batch is summarized by a robust Hotelling T²-type
+statistic using the standardized batch mean and the Phase 1 compromise matrix.
 }
 \examples{
 data("datos_farma")
-
-# Fase 1: entrenamiento con lotes bajo control
 phase1 <- robust_statis_phase1(
   subset(datos_farma, Fase == "Fase 1" & Status == "Under Control"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 )
-
-# Fase 2: evaluación de nuevos lotes (bajo control y fuera de control)
 new_data <- subset(datos_farma, Fase == "Fase 2")
 result_phase2 <- robust_statis_phase2(
   new_data = new_data,
@@ -65,8 +54,6 @@ result_phase2 <- robust_statis_phase2(
   compromise_matrix = phase1$compromise_matrix,
   global_center = phase1$global_center
 )
-
-result_phase2$standardized_data
 result_phase2$chi_stats_by_batch
 result_phase2$threshold
 }

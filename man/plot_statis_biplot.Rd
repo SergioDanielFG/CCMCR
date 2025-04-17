@@ -13,7 +13,7 @@ plot_statis_biplot(
 }
 \arguments{
 \item{phase1_result}{Result from \code{robust_statis_phase1()}, must include \code{compromise_matrix},
-\code{robust_means}, and \code{batch_statistics}.}
+\code{robust_means}, \code{batch_statistics}, and \code{global_center}.}
 
 \item{dims}{Dimensions to plot (default: c(1, 2)).}
 
@@ -30,9 +30,9 @@ from robust STATIS Dual. It represents variables as vectors and batch centers as
 }
 \examples{
 data("datos_farma")
-phase1 <- robust_statis_phase1(
+phase1_result <- robust_statis_phase1(
   subset(datos_farma, Fase == "Fase 1" & Status == "Under Control"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 )
-plot_statis_biplot(phase1)
+plot_statis_biplot(phase1_result)
 }

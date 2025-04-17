@@ -1,10 +1,8 @@
 #' Robust STATIS Dual - Phase 2 (New Batches Evaluation)
 #'
 #' Applies the robust STATIS control chart methodology to new batches using the compromise matrix
-#' and robust global center obtained in Phase 1. This function computes robust Mahalanobis distances
-#' for each observation in new batches (Phase 2), standardizes the data using robust estimates
-#' (median and MAD) from Phase 1, and then aggregates the distances per batch as the sum of squared
-#' distances. This sum serves as the Phase 2 control statistic.
+#' and robust global center obtained in Phase 1. Each batch is summarized by a robust Hotelling T²-type
+#' statistic using the standardized batch mean and the Phase 1 compromise matrix.
 #'
 #' @param new_data A data frame containing new batches to evaluate (usually out-of-control).
 #' @param variables Character vector of variable names to use.
@@ -15,29 +13,20 @@
 #'
 #' @return A list with:
 #' \describe{
-#'   \item{standardized_data}{Data frame with standardized values and distances per observation.}
-#'   \item{chi_stats_by_batch}{Chi-squared statistics per batch, calculated as the sum of squared distances.}
-#'   \item{threshold}{Chi-squared control limit based on degrees of freedom = number of variables * number of observations per batch.}
+#'   \item{standardized_data}{Data frame with standardized values.}
+#'   \item{chi_stats_by_batch}{Chi-squared statistics per batch using Hotelling-type T² formulation.}
+#'   \item{threshold}{Chi-squared control limit based on degrees of freedom = number of variables.}
 #' }
 #'
-#' @details
-#' This approach is aligned with Phase 1 methodology, where each batch is evaluated using the
-#' total contribution of its observations. The Mahalanobis distances are computed with respect
-#' to the global robust center and the compromise matrix obtained in Phase 1.
-#'
 #' @export
-#' @importFrom stats mahalanobis qchisq aggregate
+#' @importFrom stats qchisq
 #'
 #' @examples
 #' data("datos_farma")
-#'
-#' # Fase 1: entrenamiento con lotes bajo control
 #' phase1 <- robust_statis_phase1(
 #'   subset(datos_farma, Fase == "Fase 1" & Status == "Under Control"),
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 #' )
-#'
-#' # Fase 2: evaluación de nuevos lotes (bajo control y fuera de control)
 #' new_data <- subset(datos_farma, Fase == "Fase 2")
 #' result_phase2 <- robust_statis_phase2(
 #'   new_data = new_data,
@@ -47,8 +36,6 @@
 #'   compromise_matrix = phase1$compromise_matrix,
 #'   global_center = phase1$global_center
 #' )
-#'
-#' result_phase2$standardized_data
 #' result_phase2$chi_stats_by_batch
 #' result_phase2$threshold
 
@@ -68,17 +55,24 @@ robust_statis_phase2 <- function(new_data,
     standardized_data[[var]] <- (new_data[[var]] - medians[[var]]) / mads[[var]]
   }
 
-  X_phase2 <- as.matrix(standardized_data[, variables])
-  distances <- mahalanobis(
-    x = X_phase2,
-    center = global_center,
-    cov = compromise_matrix
-  )
+  # Calcular estadístico Hotelling T² por lote
+  batches <- unique(standardized_data$Batch)
+  chi_stats_by_batch <- data.frame(Batch = character(), Chi2_Stat = numeric())
 
-  standardized_data$Robust_STATIS_Distance <- distances
+  for (batch in batches) {
+    subset_batch <- standardized_data[standardized_data$Batch == batch, variables]
+    n_b <- nrow(subset_batch)
+    x_b <- colMeans(subset_batch)
+    diff <- x_b - global_center
+    T2_b <- n_b * t(diff) %*% solve(compromise_matrix) %*% diff
+    chi_stats_by_batch <- rbind(chi_stats_by_batch, data.frame(
+      Batch = batch,
+      Chi2_Stat = as.numeric(T2_b)
+    ))
+  }
 
-  chi_stats_by_batch <- aggregate(Robust_STATIS_Distance ~ Batch, data = standardized_data, FUN = sum)
-  threshold <- qchisq(0.9973, df = length(variables) * 10)
+  # Umbral basado en distribución Chi²
+  threshold <- qchisq(0.9973, df = length(variables))
 
   return(list(
     standardized_data = standardized_data,
