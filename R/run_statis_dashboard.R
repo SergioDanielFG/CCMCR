@@ -9,8 +9,15 @@
 #'
 #' @examples
 #' if (interactive()) {
+#'   # Launches the full STATIS Dual Robust monitoring dashboard with:
+#'   # - Phase 1 control chart
+#'   # - Phase 2 control chart
+#'   # - GH-Biplot
+#'   #
+#'   # Uses the internal dataset: datos_farma
 #'   run_statis_dashboard()
 #' }
+
 run_statis_dashboard <- function() {
   app_dir <- system.file("shiny", "full_panel_app.R", package = "CCMCR")
   if (app_dir == "") {

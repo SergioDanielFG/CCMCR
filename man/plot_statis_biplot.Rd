@@ -28,24 +28,11 @@ A ggplot2 object representing the GH-Biplot.
 Generates a GH-Biplot (Galindo-Hernández) using the compromise matrix obtained
 from robust STATIS Dual. It represents variables as vectors and batch centers as points.
 }
-\details{
-This is the most common form of biplot used in multivariate analysis (PCA, STATIS).
-}
 \examples{
 data("datos_farma")
 phase1 <- robust_statis_phase1(
-  subset(datos_farma, Status == "Under Control"),
-  variables = c("Concentration", "Humidity", "Dissolution", "Density"))
-
-# Basic GH-Biplot
+  subset(datos_farma, Fase == "Fase 1" & Status == "Under Control"),
+  variables = c("Concentration", "Humidity", "Dissolution", "Density")
+)
 plot_statis_biplot(phase1)
-
-# Colored by STATIS weights
-plot_statis_biplot(phase1, color_by = "weight")
-
-# Colored by Chi² distance
-plot_statis_biplot(phase1, color_by = "distance")
-
-# Highlight specific batches
-plot_statis_biplot(phase1, highlight_batches = c("Batch_7", "Batch_10"))
 }

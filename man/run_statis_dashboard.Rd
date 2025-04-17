@@ -16,6 +16,12 @@ Launches an interactive Shiny dashboard that includes:
 }
 \examples{
 if (interactive()) {
+  # Launches the full STATIS Dual Robust monitoring dashboard with:
+  # - Phase 1 control chart
+  # - Phase 2 control chart
+  # - GH-Biplot
+  #
+  # Uses the internal dataset: datos_farma
   run_statis_dashboard()
 }
 }

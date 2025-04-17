@@ -23,18 +23,18 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-  data("datos_farma")
+  # Cargar datos
+  data("datos_farma", package = "CCMCR")
   vars <- c("Concentration", "Humidity", "Dissolution", "Density")
 
-  # Fase 1
-  phase1 <- CCMCR::robust_statis_phase1(
-    subset(datos_farma, Status == "Under Control"),
-    variables = vars
-  )
+  # Fase 1: entrenamiento con los 10 lotes bajo control
+  phase1_data <- subset(datos_farma, Fase == "Fase 1" & Status == "Under Control")
+  phase1 <- CCMCR::robust_statis_phase1(phase1_data, variables = vars)
 
-  # Fase 2
+  # Fase 2: evaluación de los 7 lotes nuevos (Fase 2)
+  phase2_data <- subset(datos_farma, Fase == "Fase 2")
   phase2 <- CCMCR::robust_statis_phase2(
-    new_data = subset(datos_farma, Status == "Out of Control"),
+    new_data = phase2_data,
     variables = vars,
     medians = phase1$global_medians,
     mads = phase1$global_mads,
@@ -42,7 +42,7 @@ server <- function(input, output, session) {
     global_center = phase1$global_center
   )
 
-  # Gráfico de control - Fase 1 (usando Chi2_Stat directamente)
+  # Salida: Gráfico de control Fase 1
   output$phase1_plot <- renderPlot({
     CCMCR::plot_statis_phase1_chart(
       batch_statistics = phase1$batch_statistics,
@@ -50,7 +50,7 @@ server <- function(input, output, session) {
     )
   })
 
-  # Gráfico de control - Fase 2
+  # Salida: Gráfico de control Fase 2
   output$phase2_plot <- renderPlot({
     CCMCR::plot_statis_phase2_chart(
       phase1_result = phase1,
@@ -58,7 +58,7 @@ server <- function(input, output, session) {
     )
   })
 
-  # Biplot con opción de color dinámico
+  # Salida: GH-Biplot interactivo
   output$biplot <- renderPlot({
     CCMCR::plot_statis_biplot(
       phase1_result = phase1,
@@ -67,5 +67,5 @@ server <- function(input, output, session) {
   })
 }
 
-# Define la app como objeto exportable
+# Exportar la app
 app <- shinyApp(ui = ui, server = server)

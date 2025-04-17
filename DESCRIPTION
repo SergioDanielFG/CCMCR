@@ -22,7 +22,8 @@ Imports:
     MASS,
     ggplot2,
     rrcov,
-    shiny
+    shiny,
+    ggrepel
 Depends: 
     R (>= 3.5)
 URL: https://github.com/SergioDanielFG/CCMCR

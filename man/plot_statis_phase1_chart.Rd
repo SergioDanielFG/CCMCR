@@ -27,9 +27,16 @@ calculated in \code{robust_statis_phase1()}.
 }
 \examples{
 data("datos_farma")
+
+# Filtrar lotes bajo control de la Fase 1
 phase1_result <- robust_statis_phase1(
-  subset(datos_farma, Status == "Under Control"),
+  subset(datos_farma, Fase == "Fase 1" & Status == "Under Control"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 )
-plot_statis_phase1_chart(phase1_result$batch_statistics, num_vars = 4)
+
+# Graficar los estadísticos Chi² por lote
+plot_statis_phase1_chart(
+  batch_statistics = phase1_result$batch_statistics,
+  num_vars = 4
+)
 }

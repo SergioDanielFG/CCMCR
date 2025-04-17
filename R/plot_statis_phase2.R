@@ -15,16 +15,18 @@
 #' @export
 #' @import ggplot2
 #' @importFrom stats qchisq
-#'
 #' @examples
 #' data("datos_farma")
+#'
+#' # Fase 1: entrenamiento con los 10 lotes bajo control
 #' phase1 <- robust_statis_phase1(
-#'   subset(datos_farma, Status == "Under Control"),
+#'   subset(datos_farma, Fase == "Fase 1" & Status == "Under Control"),
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 #' )
 #'
+#' # Fase 2: evaluación de 7 lotes (4 bajo control y 3 fuera de control)
 #' phase2 <- robust_statis_phase2(
-#'   new_data = subset(datos_farma, Status == "Out of Control"),
+#'   new_data = subset(datos_farma, Fase == "Fase 2"),
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density"),
 #'   medians = phase1$global_medians,
 #'   mads = phase1$global_mads,
@@ -32,7 +34,9 @@
 #'   global_center = phase1$global_center
 #' )
 #'
+#' # Gráfico de control con los 17 lotes (10 de fase 1 y 7 de fase 2)
 #' plot_statis_phase2_chart(phase1, phase2)
+
 
 plot_statis_phase2_chart <- function(phase1_result, phase2_result,
                                      title = "Robust STATIS Dual Control Chart - All Batches") {

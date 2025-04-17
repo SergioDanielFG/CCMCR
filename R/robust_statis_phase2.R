@@ -30,11 +30,15 @@
 #'
 #' @examples
 #' data("datos_farma")
+#'
+#' # Fase 1: entrenamiento con lotes bajo control
 #' phase1 <- robust_statis_phase1(
-#'   subset(datos_farma, Status == "Under Control"),
+#'   subset(datos_farma, Fase == "Fase 1" & Status == "Under Control"),
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 #' )
-#' new_data <- subset(datos_farma, Status == "Out of Control")
+#'
+#' # Fase 2: evaluación de nuevos lotes (bajo control y fuera de control)
+#' new_data <- subset(datos_farma, Fase == "Fase 2")
 #' result_phase2 <- robust_statis_phase2(
 #'   new_data = new_data,
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density"),
@@ -43,7 +47,11 @@
 #'   compromise_matrix = phase1$compromise_matrix,
 #'   global_center = phase1$global_center
 #' )
+#'
 #' result_phase2$standardized_data
+#' result_phase2$chi_stats_by_batch
+#' result_phase2$threshold
+
 robust_statis_phase2 <- function(new_data,
                                  variables,
                                  medians,

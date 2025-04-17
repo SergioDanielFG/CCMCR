@@ -1,67 +1,69 @@
 #' Simulate Pharmaceutical Manufacturing Batches
 #'
 #' This function generates simulated data for a pharmaceutical manufacturing process.
-#' It includes both in-control and out-of-control batches with 4 continuous quality variables:
-#' Concentration, Humidity, Dissolution, and Density.
+#' It includes 10 in-control batches for Phase 1 and 7 additional batches for Phase 2,
+#' where 4 are under control and 3 are out of control.
 #'
-#' @param num_lotes_control Integer. Number of in-control batches to simulate. Default is 10.
-#' @param num_lotes_fuera_control Integer. Number of out-of-control batches to simulate. Default is 2.
 #' @param obs_por_lote Integer. Number of observations (samples) per batch. Default is 10.
 #'
-#' @return A data frame with the following columns:
-#' \describe{
-#'   \item{Batch}{Factor indicating the batch number (e.g., Batch_1, Batch_2, ...)}
-#'   \item{Status}{Factor indicating whether the batch is "Under Control" or "Out of Control"}
-#'   \item{Concentration}{Simulated concentration values}
-#'   \item{Humidity}{Simulated humidity values}
-#'   \item{Dissolution}{Simulated dissolution values}
-#'   \item{Density}{Simulated density values}
-#' }
+#' @return A data frame with columns: Batch, Fase, Status, Concentration, Humidity, Dissolution, Density.
 #'
 #' @export
 #'
 #' @importFrom MASS mvrnorm
 #' @importFrom dplyr bind_rows
-#'
-#' @examples
-#' data <- simulate_pharma_batches()
-#' head(data)
-simulate_pharma_batches <- function(num_lotes_control = 10, num_lotes_fuera_control = 2, obs_por_lote = 10) {
 
-  # Mean and covariance for in-control batches
+simulate_pharma_batches <- function(obs_por_lote = 10) {
+  # Parámetros para lotes bajo control
   mu_control <- c(98, 2.5, 300, 0.5)
   sigma_control <- matrix(c(2.0, 0.2, -5.0, 0.1,
                             0.2, 0.5, -2.0, 0.05,
                             -5.0, -2.0, 50.0, -0.5,
-                            0.1, 0.05, -0.5, 0.02), nrow = 4, byrow = TRUE)
+                            0.1, 0.05, -0.5, 0.02),
+                          nrow = 4, byrow = TRUE)
 
-  # Generate in-control data
-  control_data <- dplyr::bind_rows(lapply(1:num_lotes_control, function(batch) {
-    data.frame(Batch = paste0("Batch_", batch),
-               Status = "Under Control",
-               MASS::mvrnorm(obs_por_lote, mu_control, sigma_control))
+  # Simular 10 lotes bajo control (Fase 1)
+  control_fase1 <- dplyr::bind_rows(lapply(1:10, function(batch) {
+    data.frame(
+      Batch = paste0("Batch_", batch),
+      Fase = "Fase 1",
+      Status = "Under Control",
+      MASS::mvrnorm(obs_por_lote, mu_control, sigma_control)
+    )
   }))
 
-  # Mean and covariance for out-of-control batches
+  # Simular 4 lotes bajo control (Fase 2)
+  control_fase2 <- dplyr::bind_rows(lapply(11:14, function(batch) {
+    data.frame(
+      Batch = paste0("Batch_", batch),
+      Fase = "Fase 2",
+      Status = "Under Control",
+      MASS::mvrnorm(obs_por_lote, mu_control, sigma_control)
+    )
+  }))
+
+  # Parámetros para lotes fuera de control
   mu_out <- c(95, 4.0, 380, 0.4)
   sigma_out <- sigma_control * 1.5
 
-  # Generate out-of-control data
-  out_data <- dplyr::bind_rows(lapply((num_lotes_control + 1):(num_lotes_control + num_lotes_fuera_control), function(batch) {
-    data.frame(Batch = paste0("Batch_", batch),
-               Status = "Out of Control",
-               MASS::mvrnorm(obs_por_lote, mu_out, sigma_out))
+  # Simular 3 lotes fuera de control (Fase 2)
+  out_fase2 <- dplyr::bind_rows(lapply(15:17, function(batch) {
+    data.frame(
+      Batch = paste0("Batch_", batch),
+      Fase = "Fase 2",
+      Status = "Out of Control",
+      MASS::mvrnorm(obs_por_lote, mu_out, sigma_out)
+    )
   }))
 
-  # Combine datasets
-  datos <- dplyr::bind_rows(control_data, out_data)
-  colnames(datos)[3:6] <- c("Concentration", "Humidity", "Dissolution", "Density")
+  # Unir los datos
+  datos <- dplyr::bind_rows(control_fase1, control_fase2, out_fase2)
+  colnames(datos)[4:7] <- c("Concentration", "Humidity", "Dissolution", "Density")
 
-  # Format Batch and Status as factors
-  datos$Status <- factor(datos$Status, levels = c("Under Control", "Out of Control"))
+  # Convertir columnas en factores
   datos$Batch <- factor(datos$Batch)
+  datos$Status <- factor(datos$Status, levels = c("Under Control", "Out of Control"))
+  datos$Fase <- factor(datos$Fase, levels = c("Fase 1", "Fase 2"))
 
   return(datos)
 }
-
-

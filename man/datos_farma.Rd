@@ -5,36 +5,29 @@
 \alias{datos_farma}
 \title{Simulated Pharmaceutical Process Data}
 \format{
-An object of class \code{data.frame} with 120 rows and 6 columns.
+A data frame with 170 rows and 7 variables:
+\describe{
+\item{Batch}{Batch identifier}
+\item{Status}{"Under Control" or "Out of Control"}
+\item{Fase}{Phase: "Fase 1" or "Fase 2"}
+\item{Concentration}{Concentration (mg/mL)}
+\item{Humidity}{Humidity (\% w/w)}
+\item{Dissolution}{Dissolution time (seconds)}
+\item{Density}{Density (g/cm\eqn{^3})}
+}
 }
 \source{
-Simulated using \code{simulate_pharma_batches()} from the CCMCR package.
+Simulated using \code{simulate_pharma_batches()}.
 }
 \usage{
 data("datos_farma")
 }
 \description{
 This dataset contains simulated pharmaceutical manufacturing data,
-including 10 in-control batches and 2 out-of-control batches.
+including 10 in-control batches (Phase 1) and 7 batches in Phase 2
+(4 under control, 3 out of control).
 }
 \details{
-Each batch contains 10 observations and 4 quality control variables:
-Concentration, Humidity, Dissolution, and Density.
-
-#' @format A data frame with 120 rows and 6 variables:
-\describe{
-\item{Batch}{Batch identifier}
-\item{Status}{"Under Control" or "Out of Control"}
-\item{Concentration}{Quantitative quality variable (mg/mL)}
-\item{Humidity}{Quantitative quality variable (\% w/w)}
-\item{Dissolution}{Quantitative quality variable (seconds)}
-\item{Density}{Quantitative quality variable (g/cm^3)}
-}
-}
-\examples{
-data("datos_farma")
-head(datos_farma)
-summary(datos_farma)
-table(datos_farma$Status)
+Each batch contains 10 observations and 4 quantitative quality control variables.
 }
 \keyword{datasets}

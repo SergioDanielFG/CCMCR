@@ -29,8 +29,9 @@ using robust standardization (median and MAD) by batch.
 }
 \examples{
 data("datos_farma")
+phase1_data <- subset(datos_farma, Fase == "Fase 1" & Status == "Under Control")
 result <- robust_statis_phase1(
-  subset(datos_farma, Status == "Under Control"),
+  data = phase1_data,
   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 )
 result$compromise_matrix
