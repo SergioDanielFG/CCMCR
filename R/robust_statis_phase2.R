@@ -1,21 +1,21 @@
 #' Robust STATIS Dual - Phase 2 (New Batches Evaluation)
 #'
 #' Applies the robust STATIS control chart methodology to new batches using the compromise matrix
-#' and robust global center obtained in Phase 1. Each batch is summarized by a robust Hotelling T²-type
-#' statistic using the standardized batch mean and the Phase 1 compromise matrix.
+#' and robust global center obtained in Phase 1. Each batch is summarized by a robust Hotelling-type
+#' T² statistic using the batch mean (standardized globally) and the Phase 1 compromise matrix.
 #'
 #' @param new_data A data frame containing new batches to evaluate (usually out-of-control).
 #' @param variables Character vector of variable names to use.
-#' @param medians Named numeric vector of medians from Phase 1 (one per variable).
-#' @param mads Named numeric vector of MADs from Phase 1 (one per variable).
+#' @param medians Named numeric vector of global medians from Phase 1 (one per variable).
+#' @param mads Named numeric vector of global MADs from Phase 1 (one per variable, scaled by 1.4826).
 #' @param compromise_matrix Robust compromise covariance matrix from Phase 1.
 #' @param global_center Robust global center (vector) from Phase 1.
 #'
 #' @return A list with:
 #' \describe{
-#'   \item{standardized_data}{Data frame with standardized values.}
+#'   \item{standardized_data}{Data frame with new data standardized using Phase 1 global medians and MADs.}
 #'   \item{chi_stats_by_batch}{Chi-squared statistics per batch using Hotelling-type T² formulation.}
-#'   \item{threshold}{Chi-squared control limit based on degrees of freedom = number of variables.}
+#'   \item{threshold}{Chi-squared control limit at 0.9973 quantile, df = number of variables.}
 #' }
 #'
 #' @export
@@ -51,11 +51,11 @@ robust_statis_phase2 <- function(new_data,
 
   standardized_data <- new_data
 
+  # Estandarización global (MAD ya debe venir escalada con 1.4826)
   for (var in variables) {
     standardized_data[[var]] <- (new_data[[var]] - medians[[var]]) / mads[[var]]
   }
 
-  # Calcular estadístico Hotelling T² por lote
   batches <- unique(standardized_data$Batch)
   chi_stats_by_batch <- data.frame(Batch = character(), Chi2_Stat = numeric())
 
@@ -71,7 +71,6 @@ robust_statis_phase2 <- function(new_data,
     ))
   }
 
-  # Umbral basado en distribución Chi²
   threshold <- qchisq(0.9973, df = length(variables))
 
   return(list(

@@ -20,12 +20,13 @@ plot_statis_phase2_chart(
 \item{title}{Optional string. Plot title.}
 }
 \value{
-A ggplot2 object representing the control chart.
+A ggplot2 object representing the control chart with all batches (Fase 1 y Fase 2).
 }
 \description{
 Plots the Chi-squared statistics for both Phase 1 and Phase 2 batches,
 using the robust Hotelling T² statistic per batch. Batches from Phase 1 are assumed
-to be under control and those from Phase 2 are evaluated against the control threshold.
+to be under control and those from Phase 2 are evaluated against the control threshold
+obtained from a chi-squared distribution with df equal to the number of variables.
 }
 \examples{
 data("datos_farma")

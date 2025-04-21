@@ -15,18 +15,30 @@ plot_statis_biplot(
 \item{phase1_result}{Result from \code{robust_statis_phase1()}, must include \code{compromise_matrix},
 \code{robust_means}, \code{batch_statistics}, and \code{global_center}.}
 
-\item{dims}{Dimensions to plot (default: c(1, 2)).}
+\item{dims}{Numeric vector of length 2 indicating the dimensions to plot (default: c(1, 2)).}
 
-\item{color_by}{Optional: "none" (default), "weight" (from STATIS), or "distance".}
+\item{color_by}{Optional string to color batches: "none" (default), "weight" (from STATIS weights), or "distance" (Chi² stat).}
 
-\item{highlight_batches}{Optional: Vector of batch names to highlight.}
+\item{highlight_batches}{Optional: Vector of batch names to enlarge and emphasize.}
 }
 \value{
-A ggplot2 object representing the GH-Biplot.
+A ggplot2 object representing the GH-Biplot:
+\itemize{
+\item Arrows: variables (based on eigenvectors of the compromise matrix)
+\item Dots: robust centers of batches (projected)
+\item Red point: global robust center (compromise)
+}
 }
 \description{
 Generates a GH-Biplot (Galindo-Hernández) using the compromise matrix obtained
-from robust STATIS Dual. It represents variables as vectors and batch centers as points.
+from robust STATIS Dual (without trace normalization). It represents variables
+as vectors (axes) and batch centers as projected points in a reduced 2D space.
+}
+\details{
+This biplot enables visual interpretation of how batch centers relate to
+the compromise structure derived from robust covariance matrices. Variables
+are represented as vectors from the origin, while batch centers are projected
+using the eigenvectors of the compromise matrix.
 }
 \examples{
 data("datos_farma")
@@ -34,5 +46,16 @@ phase1_result <- robust_statis_phase1(
   subset(datos_farma, Fase == "Fase 1" & Status == "Under Control"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 )
+
+# Biplot básico
 plot_statis_biplot(phase1_result)
+
+# Biplot coloreado por pesos del STATIS
+plot_statis_biplot(phase1_result, color_by = "weight")
+
+# Biplot coloreado por estadístico Chi² robusto por lote
+plot_statis_biplot(phase1_result, color_by = "distance")
+
+# Biplot destacando algunos lotes
+plot_statis_biplot(phase1_result, highlight_batches = c("Batch_1", "Batch_10"))
 }

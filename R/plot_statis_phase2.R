@@ -2,7 +2,8 @@
 #'
 #' Plots the Chi-squared statistics for both Phase 1 and Phase 2 batches,
 #' using the robust Hotelling T² statistic per batch. Batches from Phase 1 are assumed
-#' to be under control and those from Phase 2 are evaluated against the control threshold.
+#' to be under control and those from Phase 2 are evaluated against the control threshold
+#' obtained from a chi-squared distribution with df equal to the number of variables.
 #'
 #' @param phase1_result A list returned by `robust_statis_phase1()`, which includes
 #' `batch_statistics` with Chi-squared values for Phase 1 batches.
@@ -10,11 +11,12 @@
 #' `chi_stats_by_batch` with Hotelling T² values and a control `threshold`.
 #' @param title Optional string. Plot title.
 #'
-#' @return A ggplot2 object representing the control chart.
+#' @return A ggplot2 object representing the control chart with all batches (Fase 1 y Fase 2).
 #' @export
 #'
 #' @import ggplot2
 #' @importFrom stats qchisq
+#' @importFrom forcats fct_inorder
 #'
 #' @examples
 #' data("datos_farma")
@@ -40,33 +42,30 @@ plot_statis_phase2_chart <- function(phase1_result, phase2_result,
   df1$Status <- "Under Control"
   df2$Status <- "Out of Control"
 
-  # Homogeneizar estructura
   df1 <- df1[, c("Batch", "Chi2_Stat", "Status")]
   df2 <- df2[, c("Batch", "Chi2_Stat", "Status")]
 
   combined <- rbind(df1, df2)
-  combined$Batch <- factor(combined$Batch, levels = unique(combined$Batch))
+  combined$Batch <- forcats::fct_inorder(combined$Batch)
 
   ggplot(combined, aes(x = Batch, y = Chi2_Stat, color = Status, group = 1)) +
-    geom_point(size = 3, color = "#0072B2") +
-    geom_line(color = "#0072B2", linewidth = 0.8) +
+    geom_point(size = 3 ) +
+    geom_line(linewidth = 0.8 ) +
 
-    # Etiquetas para lotes bajo control (debajo del punto)
+    # Etiquetas para lotes bajo control
     geom_text(
       data = subset(combined, Status == "Under Control"),
       aes(label = round(Chi2_Stat, 1)),
       color = "black", vjust = 2, size = 3.2, show.legend = FALSE
     ) +
 
-    # Etiquetas para lotes fuera de control (debajo del punto)
+    # Etiquetas para lotes fuera de control
     geom_text(
       data = subset(combined, Status == "Out of Control"),
       aes(label = round(Chi2_Stat, 1)),
-      color = "#B22222", fontface = "bold",
-      vjust = 2, size = 3.5, show.legend = FALSE
+      color = "#B22222", fontface = "bold", vjust = 2, size = 3.5, show.legend = FALSE
     ) +
 
-    # Línea de control
     geom_hline(yintercept = phase2_result$threshold, linetype = "dashed", color = "red", linewidth = 0.8) +
     annotate("text",
              x = Inf, y = phase2_result$threshold,

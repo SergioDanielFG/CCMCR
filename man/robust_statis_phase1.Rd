@@ -14,19 +14,26 @@ robust_statis_phase1(data, variables)
 \value{
 A list containing:
 \describe{
-\item{compromise_matrix}{The compromise matrix (robust)}
-\item{global_center}{Global robust center}
-\item{batch_statistics}{Data frame with Batch, Chi2_Stat and Weight}
+\item{compromise_matrix}{The compromise matrix (robust), without trace normalization}
+\item{global_center}{Global robust center of batch means}
+\item{batch_statistics}{Data frame with Batch, Chi2_Stat (Hotelling-type statistic) and Weight}
 \item{batch_medians}{Named list of per-batch medians per variable}
-\item{batch_mads}{Named list of per-batch MADs per variable}
-\item{global_medians}{Global medians per variable (for phase 2)}
-\item{global_mads}{Global MADs per variable (for phase 2)}
+\item{batch_mads}{Named list of per-batch MADs per variable }
+\item{global_medians}{Global medians per variable (for Phase 2)}
+\item{global_mads}{Global MADs per variable (scaled, for Phase 2)}
+\item{robust_means}{Robust center of each batch (from MCD)}
+\item{standardized_data}{The entire data set standardized by batch medians and MADs}
+\item{robust_covariances}{List of robust covariance matrices per batch}
+\item{similarity_matrix}{Hilbert-Schmidt similarity matrix between batches}
+\item{statis_weights}{Weights obtained from the first eigenvector of the similarity matrix}
+\item{first_eigenvector}{First eigenvector of the similarity matrix (not normalized)}
 }
 }
 \description{
 Applies robust STATIS Dual methodology to Phase 1 data (under control batches),
-using robust standardization (median and MAD) by batch. Computes Hotelling-type T² statistics
-per batch using robust batch centers and the compromise matrix.
+using robust standardization (median and MAD scaled by 1.4826) by batch.
+Covariance matrices are robustly estimated using MCD and used directly (without trace normalization)
+in the construction of the compromise matrix.
 }
 \examples{
 data("datos_farma")
@@ -37,5 +44,8 @@ result <- robust_statis_phase1(
 )
 result$compromise_matrix
 result$batch_statistics
-result$standardized_data
+result$robust_covariances
+result$similarity_matrix
+result$statis_weights
+result$robust_means
 }

@@ -23,7 +23,8 @@ Imports:
     ggplot2,
     rrcov,
     shiny,
-    ggrepel
+    ggrepel,
+    forcats
 Depends: 
     R (>= 3.5)
 URL: https://github.com/SergioDanielFG/CCMCR

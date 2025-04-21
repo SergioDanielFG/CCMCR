@@ -18,9 +18,9 @@ robust_statis_phase2(
 
 \item{variables}{Character vector of variable names to use.}
 
-\item{medians}{Named numeric vector of medians from Phase 1 (one per variable).}
+\item{medians}{Named numeric vector of global medians from Phase 1 (one per variable).}
 
-\item{mads}{Named numeric vector of MADs from Phase 1 (one per variable).}
+\item{mads}{Named numeric vector of global MADs from Phase 1 (one per variable, scaled by 1.4826).}
 
 \item{compromise_matrix}{Robust compromise covariance matrix from Phase 1.}
 
@@ -29,15 +29,15 @@ robust_statis_phase2(
 \value{
 A list with:
 \describe{
-\item{standardized_data}{Data frame with standardized values.}
+\item{standardized_data}{Data frame with new data standardized using Phase 1 global medians and MADs.}
 \item{chi_stats_by_batch}{Chi-squared statistics per batch using Hotelling-type T² formulation.}
-\item{threshold}{Chi-squared control limit based on degrees of freedom = number of variables.}
+\item{threshold}{Chi-squared control limit at 0.9973 quantile, df = number of variables.}
 }
 }
 \description{
 Applies the robust STATIS control chart methodology to new batches using the compromise matrix
-and robust global center obtained in Phase 1. Each batch is summarized by a robust Hotelling T²-type
-statistic using the standardized batch mean and the Phase 1 compromise matrix.
+and robust global center obtained in Phase 1. Each batch is summarized by a robust Hotelling-type
+T² statistic using the batch mean (standardized globally) and the Phase 1 compromise matrix.
 }
 \examples{
 data("datos_farma")

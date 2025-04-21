@@ -14,6 +14,7 @@
 #'
 #' @import ggplot2
 #' @importFrom stats qchisq
+#' @importFrom forcats fct_inorder
 #'
 #' @examples
 #' data("datos_farma")
@@ -26,30 +27,24 @@
 #'   num_vars = 4
 #' )
 
-plot_statis_phase1_chart <- function(batch_statistics, num_vars, title = "Robust STATIS Dual Control Chart - Phase 1") {
-  # Nuevo: umbral basado en chi² con p grados de libertad (no p * n_b)
+plot_statis_phase1_chart <- function(batch_statistics, num_vars,
+                                     title = "Robust STATIS Dual Control Chart - Phase 1") {
   chi_threshold <- qchisq(0.9973, df = num_vars)
 
-  ggplot(batch_statistics, aes(x = Batch, y = Chi2_Stat, group = 1)) +
-    geom_point(size = 3, color = "#0072B2") +
-    geom_line(color = "#0072B2", linewidth = 0.8) +
+  batch_statistics$Batch <- forcats::fct_inorder(batch_statistics$Batch)
 
-    # Etiquetas sobre cada punto
+  ggplot(batch_statistics, aes(x = Batch, y = Chi2_Stat, group = 1)) +
+    geom_point(size = 3, color="#00C8D7" ) +
+    geom_line(linewidth = 0.8, color="#00C8D7") +
     geom_text(
       aes(label = round(Chi2_Stat, 1)),
-      color = "black",
-      vjust = -0.8,
-      size = 3.2,
-      show.legend = FALSE
+      color = "black", vjust = -0.8, size = 3.2, show.legend = FALSE
     ) +
-
-    # Línea de umbral
     geom_hline(yintercept = chi_threshold, linetype = "dashed", color = "red", linewidth = 0.8) +
     annotate("text",
              x = Inf, y = chi_threshold,
              label = paste0("UCL = ", round(chi_threshold, 1)),
              hjust = 1.2, vjust = -0.5, color = "red", size = 4) +
-
     labs(
       title = title,
       x = "Batch",
