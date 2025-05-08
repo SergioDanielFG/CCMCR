@@ -14,38 +14,44 @@ robust_statis_phase2(
 )
 }
 \arguments{
-\item{new_data}{A data frame containing new batches to evaluate (usually out-of-control).}
+\item{new_data}{A data frame containing the new batches to evaluate.}
 
-\item{variables}{Character vector of variable names to use.}
+\item{variables}{Character vector with the names of the variables to be used.}
 
-\item{medians}{Named numeric vector of global medians from Phase 1 (one per variable).}
+\item{medians}{Named numeric vector containing the global medians obtained in Phase 1.}
 
-\item{mads}{Named numeric vector of global MADs from Phase 1 (one per variable, scaled by 1.4826).}
+\item{mads}{Named numeric vector containing the scaled MADs (constant 1.4826) obtained in Phase 1.}
 
-\item{compromise_matrix}{Robust compromise covariance matrix from Phase 1.}
+\item{compromise_matrix}{Robust compromise matrix computed in Phase 1.}
 
-\item{global_center}{Robust global center (vector) from Phase 1.}
+\item{global_center}{Robust global center obtained in Phase 1.}
 }
 \value{
-A list with:
+A list containing:
 \describe{
-\item{standardized_data}{Data frame with new data standardized using Phase 1 global medians and MADs.}
-\item{chi_stats_by_batch}{Chi-squared statistics per batch using Hotelling-type T² formulation.}
-\item{threshold}{Chi-squared control limit at 0.9973 quantile, df = number of variables.}
+\item{standardized_data}{Data frame with the new batches standardized using the global medians and scaled MADs (constant 1.4826).}
+\item{chi_stats_by_batch}{Data frame with the Chi-squared statistics per batch (Hotelling-type \( T^2 \)).}
+\item{threshold}{Control limit based on the Chi-squared distribution (0.9973 quantile, degrees of freedom equal to the number of variables).}
 }
 }
 \description{
-Applies the robust STATIS control chart methodology to new batches using the compromise matrix
-and robust global center obtained in Phase 1. Each batch is summarized by a robust Hotelling-type
-T² statistic using the batch mean (standardized globally) and the Phase 1 compromise matrix.
+Applies the robust STATIS Dual control chart methodology to evaluate new batches,
+using the compromise matrix and the global robust center obtained in Phase 1.
+Each batch is summarized using a robust Hotelling-type \( T^2 \) statistic.
 }
 \examples{
-data("datos_farma")
+# Simulate new pharmaceutical manufacturing batches
+datos <- simulate_pharma_batches()
+
+# Phase 1 analysis: use only Phase 1 and under control batches
+phase1_data <- subset(datos, Fase == "Fase 1" & Status == "Under Control")
 phase1 <- robust_statis_phase1(
-  subset(datos_farma, Fase == "Fase 1" & Status == "Under Control"),
+  data = phase1_data,
   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 )
-new_data <- subset(datos_farma, Fase == "Fase 2")
+
+# Phase 2 analysis: evaluate new batches (Phase 2)
+new_data <- subset(datos, Fase == "Fase 2")
 result_phase2 <- robust_statis_phase2(
   new_data = new_data,
   variables = c("Concentration", "Humidity", "Dissolution", "Density"),
@@ -54,6 +60,8 @@ result_phase2 <- robust_statis_phase2(
   compromise_matrix = phase1$compromise_matrix,
   global_center = phase1$global_center
 )
+
+# View main outputs
 result_phase2$chi_stats_by_batch
 result_phase2$threshold
 }

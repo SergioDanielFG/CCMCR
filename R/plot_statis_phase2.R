@@ -19,19 +19,26 @@
 #' @importFrom forcats fct_inorder
 #'
 #' @examples
-#' data("datos_farma")
+#' # Simulate pharmaceutical manufacturing batches
+#' datos <- simulate_pharma_batches()
+#'
+#' # Phase 1 analysis: select under control batches
 #' phase1 <- robust_statis_phase1(
-#'   subset(datos_farma, Fase == "Fase 1" & Status == "Under Control"),
+#'   data = subset(datos, Fase == "Fase 1" & Status == "Under Control"),
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 #' )
+#'
+#' # Phase 2 evaluation: new batches
 #' phase2 <- robust_statis_phase2(
-#'   new_data = subset(datos_farma, Fase == "Fase 2"),
+#'   new_data = subset(datos, Fase == "Fase 2"),
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density"),
 #'   medians = phase1$global_medians,
 #'   mads = phase1$global_mads,
 #'   compromise_matrix = phase1$compromise_matrix,
 #'   global_center = phase1$global_center
 #' )
+#'
+#' # Plot Phase 1 + Phase 2 control chart
 #' plot_statis_phase2_chart(phase1, phase2)
 
 plot_statis_phase2_chart <- function(phase1_result, phase2_result,
@@ -49,17 +56,17 @@ plot_statis_phase2_chart <- function(phase1_result, phase2_result,
   combined$Batch <- forcats::fct_inorder(combined$Batch)
 
   ggplot(combined, aes(x = Batch, y = Chi2_Stat, color = Status, group = 1)) +
-    geom_point(size = 3 ) +
-    geom_line(linewidth = 0.8 ) +
+    geom_point(size = 3) +
+    geom_line(linewidth = 0.8) +
 
-    # Etiquetas para lotes bajo control
+    # Labels for under control batches
     geom_text(
       data = subset(combined, Status == "Under Control"),
       aes(label = round(Chi2_Stat, 1)),
       color = "black", vjust = 2, size = 3.2, show.legend = FALSE
     ) +
 
-    # Etiquetas para lotes fuera de control
+    # Labels for out-of-control batches
     geom_text(
       data = subset(combined, Status == "Out of Control"),
       aes(label = round(Chi2_Stat, 1)),

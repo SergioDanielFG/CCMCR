@@ -41,21 +41,24 @@ are represented as vectors from the origin, while batch centers are projected
 using the eigenvectors of the compromise matrix.
 }
 \examples{
-data("datos_farma")
+# Simulate pharmaceutical manufacturing batches
+datos <- simulate_pharma_batches()
+
+# Apply robust STATIS Dual to Phase 1 under control batches
 phase1_result <- robust_statis_phase1(
-  subset(datos_farma, Fase == "Fase 1" & Status == "Under Control"),
+  data = subset(datos, Fase == "Fase 1" & Status == "Under Control"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 )
 
-# Biplot básico
+# Basic biplot
 plot_statis_biplot(phase1_result)
 
-# Biplot coloreado por pesos del STATIS
+# Colored by STATIS weights
 plot_statis_biplot(phase1_result, color_by = "weight")
 
-# Biplot coloreado por estadístico Chi² robusto por lote
+# Colored by Chi² robust statistics
 plot_statis_biplot(phase1_result, color_by = "distance")
 
-# Biplot destacando algunos lotes
+# Highlighting specific batches
 plot_statis_biplot(phase1_result, highlight_batches = c("Batch_1", "Batch_10"))
 }

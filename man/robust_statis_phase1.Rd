@@ -9,39 +9,46 @@ robust_statis_phase1(data, variables)
 \arguments{
 \item{data}{A data frame containing the process data with batch information.}
 
-\item{variables}{Character vector of column names to be used in the analysis.}
+\item{variables}{Character vector with the names of the variables to be used in the analysis.}
 }
 \value{
 A list containing:
 \describe{
-\item{compromise_matrix}{The compromise matrix (robust), without trace normalization}
-\item{global_center}{Global robust center of batch means}
-\item{batch_statistics}{Data frame with Batch, Chi2_Stat (Hotelling-type statistic) and Weight}
-\item{batch_medians}{Named list of per-batch medians per variable}
-\item{batch_mads}{Named list of per-batch MADs per variable }
-\item{global_medians}{Global medians per variable (for Phase 2)}
-\item{global_mads}{Global MADs per variable (scaled, for Phase 2)}
-\item{robust_means}{Robust center of each batch (from MCD)}
-\item{standardized_data}{The entire data set standardized by batch medians and MADs}
+\item{compromise_matrix}{Robust compromise matrix (without trace normalization)}
+\item{global_center}{Global robust center of the batches}
+\item{batch_statistics}{Data frame with Batch, Chi2_Stat (Hotelling-type statistic), and Weight}
+\item{batch_medians}{List of medians per batch and variable}
+\item{batch_mads}{List of scaled MADs per batch and variable (constant 1.4826)}
+\item{global_medians}{Global medians per variable (for use in Phase 2)}
+\item{global_mads}{Global scaled MADs per variable (constant 1.4826)}
+\item{robust_means}{List of robust centers of each batch (estimated by MCD)}
+\item{standardized_data}{Data set standardized batch by batch}
 \item{robust_covariances}{List of robust covariance matrices per batch}
 \item{similarity_matrix}{Hilbert-Schmidt similarity matrix between batches}
 \item{statis_weights}{Weights obtained from the first eigenvector of the similarity matrix}
-\item{first_eigenvector}{First eigenvector of the similarity matrix (not normalized)}
+\item{first_eigenvector}{First eigenvector of the similarity matrix (unnormalized)}
 }
 }
 \description{
-Applies robust STATIS Dual methodology to Phase 1 data (under control batches),
-using robust standardization (median and MAD scaled by 1.4826) by batch.
-Covariance matrices are robustly estimated using MCD and used directly (without trace normalization)
-in the construction of the compromise matrix.
+Applies the Robust STATIS Dual methodology to Phase 1 data (under control batches),
+using robust batch-wise standardization (median and MAD scaled with constant 1.4826).
+Covariance matrices are robustly estimated using the MCD method
+and used directly (without trace normalization) to construct the compromise matrix.
 }
 \examples{
-data("datos_farma")
-phase1_data <- subset(datos_farma, Fase == "Fase 1" & Status == "Under Control")
+# Simulate new pharmaceutical manufacturing batches
+datos <- simulate_pharma_batches()
+
+# Select only Phase 1 under control batches
+phase1_data <- subset(datos, Fase == "Fase 1" & Status == "Under Control")
+
+# Apply robust STATIS Dual methodology
 result <- robust_statis_phase1(
   data = phase1_data,
   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 )
+
+# View main outputs
 result$compromise_matrix
 result$batch_statistics
 result$robust_covariances

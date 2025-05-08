@@ -1,33 +1,39 @@
 #' Robust STATIS Dual - Phase 2 (New Batches Evaluation)
 #'
-#' Applies the robust STATIS control chart methodology to new batches using the compromise matrix
-#' and robust global center obtained in Phase 1. Each batch is summarized by a robust Hotelling-type
-#' T² statistic using the batch mean (standardized globally) and the Phase 1 compromise matrix.
+#' Applies the robust STATIS Dual control chart methodology to evaluate new batches,
+#' using the compromise matrix and the global robust center obtained in Phase 1.
+#' Each batch is summarized using a robust Hotelling-type \( T^2 \) statistic.
 #'
-#' @param new_data A data frame containing new batches to evaluate (usually out-of-control).
-#' @param variables Character vector of variable names to use.
-#' @param medians Named numeric vector of global medians from Phase 1 (one per variable).
-#' @param mads Named numeric vector of global MADs from Phase 1 (one per variable, scaled by 1.4826).
-#' @param compromise_matrix Robust compromise covariance matrix from Phase 1.
-#' @param global_center Robust global center (vector) from Phase 1.
+#' @param new_data A data frame containing the new batches to evaluate.
+#' @param variables Character vector with the names of the variables to be used.
+#' @param medians Named numeric vector containing the global medians obtained in Phase 1.
+#' @param mads Named numeric vector containing the scaled MADs (constant 1.4826) obtained in Phase 1.
+#' @param compromise_matrix Robust compromise matrix computed in Phase 1.
+#' @param global_center Robust global center obtained in Phase 1.
 #'
-#' @return A list with:
+#' @return A list containing:
 #' \describe{
-#'   \item{standardized_data}{Data frame with new data standardized using Phase 1 global medians and MADs.}
-#'   \item{chi_stats_by_batch}{Chi-squared statistics per batch using Hotelling-type T² formulation.}
-#'   \item{threshold}{Chi-squared control limit at 0.9973 quantile, df = number of variables.}
+#'   \item{standardized_data}{Data frame with the new batches standardized using the global medians and scaled MADs (constant 1.4826).}
+#'   \item{chi_stats_by_batch}{Data frame with the Chi-squared statistics per batch (Hotelling-type \( T^2 \)).}
+#'   \item{threshold}{Control limit based on the Chi-squared distribution (0.9973 quantile, degrees of freedom equal to the number of variables).}
 #' }
 #'
 #' @export
 #' @importFrom stats qchisq
 #'
 #' @examples
-#' data("datos_farma")
+#' # Simulate new pharmaceutical manufacturing batches
+#' datos <- simulate_pharma_batches()
+#'
+#' # Phase 1 analysis: use only Phase 1 and under control batches
+#' phase1_data <- subset(datos, Fase == "Fase 1" & Status == "Under Control")
 #' phase1 <- robust_statis_phase1(
-#'   subset(datos_farma, Fase == "Fase 1" & Status == "Under Control"),
+#'   data = phase1_data,
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 #' )
-#' new_data <- subset(datos_farma, Fase == "Fase 2")
+#'
+#' # Phase 2 analysis: evaluate new batches (Phase 2)
+#' new_data <- subset(datos, Fase == "Fase 2")
 #' result_phase2 <- robust_statis_phase2(
 #'   new_data = new_data,
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density"),
@@ -36,6 +42,8 @@
 #'   compromise_matrix = phase1$compromise_matrix,
 #'   global_center = phase1$global_center
 #' )
+#'
+#' # View main outputs
 #' result_phase2$chi_stats_by_batch
 #' result_phase2$threshold
 
@@ -51,7 +59,7 @@ robust_statis_phase2 <- function(new_data,
 
   standardized_data <- new_data
 
-  # Estandarización global (MAD ya debe venir escalada con 1.4826)
+  # Global standardization using the global medians and scaled MADs from Phase 1
   for (var in variables) {
     standardized_data[[var]] <- (new_data[[var]] - medians[[var]]) / mads[[var]]
   }

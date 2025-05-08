@@ -17,11 +17,16 @@
 #' @importFrom forcats fct_inorder
 #'
 #' @examples
-#' data("datos_farma")
+#' # Simulate new pharmaceutical manufacturing batches
+#' datos <- simulate_pharma_batches()
+#'
+#' # Phase 1 analysis: select under control batches from Phase 1
 #' phase1_result <- robust_statis_phase1(
-#'   subset(datos_farma, Fase == "Fase 1" & Status == "Under Control"),
+#'   data = subset(datos, Fase == "Fase 1" & Status == "Under Control"),
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 #' )
+#'
+#' # Plot the Phase 1 robust control chart
 #' plot_statis_phase1_chart(
 #'   batch_statistics = phase1_result$batch_statistics,
 #'   num_vars = 4
@@ -34,8 +39,8 @@ plot_statis_phase1_chart <- function(batch_statistics, num_vars,
   batch_statistics$Batch <- forcats::fct_inorder(batch_statistics$Batch)
 
   ggplot(batch_statistics, aes(x = Batch, y = Chi2_Stat, group = 1)) +
-    geom_point(size = 3, color="#00C8D7" ) +
-    geom_line(linewidth = 0.8, color="#00C8D7") +
+    geom_point(size = 3, color = "#00C8D7") +
+    geom_line(linewidth = 0.8, color = "#00C8D7") +
     geom_text(
       aes(label = round(Chi2_Stat, 1)),
       color = "black", vjust = -0.8, size = 3.2, show.legend = FALSE

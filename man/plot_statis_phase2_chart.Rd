@@ -29,18 +29,25 @@ to be under control and those from Phase 2 are evaluated against the control thr
 obtained from a chi-squared distribution with df equal to the number of variables.
 }
 \examples{
-data("datos_farma")
+# Simulate pharmaceutical manufacturing batches
+datos <- simulate_pharma_batches()
+
+# Phase 1 analysis: select under control batches
 phase1 <- robust_statis_phase1(
-  subset(datos_farma, Fase == "Fase 1" & Status == "Under Control"),
+  data = subset(datos, Fase == "Fase 1" & Status == "Under Control"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 )
+
+# Phase 2 evaluation: new batches
 phase2 <- robust_statis_phase2(
-  new_data = subset(datos_farma, Fase == "Fase 2"),
+  new_data = subset(datos, Fase == "Fase 2"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density"),
   medians = phase1$global_medians,
   mads = phase1$global_mads,
   compromise_matrix = phase1$compromise_matrix,
   global_center = phase1$global_center
 )
+
+# Plot Phase 1 + Phase 2 control chart
 plot_statis_phase2_chart(phase1, phase2)
 }

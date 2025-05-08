@@ -27,11 +27,16 @@ calculated in \code{robust_statis_phase1()}. The control limit is based on a Chi
 distribution with degrees of freedom equal to the number of variables.
 }
 \examples{
-data("datos_farma")
+# Simulate new pharmaceutical manufacturing batches
+datos <- simulate_pharma_batches()
+
+# Phase 1 analysis: select under control batches from Phase 1
 phase1_result <- robust_statis_phase1(
-  subset(datos_farma, Fase == "Fase 1" & Status == "Under Control"),
+  data = subset(datos, Fase == "Fase 1" & Status == "Under Control"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 )
+
+# Plot the Phase 1 robust control chart
 plot_statis_phase1_chart(
   batch_statistics = phase1_result$batch_statistics,
   num_vars = 4

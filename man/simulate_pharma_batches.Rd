@@ -2,18 +2,30 @@
 % Please edit documentation in R/Datasimulation.R
 \name{simulate_pharma_batches}
 \alias{simulate_pharma_batches}
-\title{Simulate Pharmaceutical Manufacturing Batches}
+\title{Simulate Pharmaceutical Manufacturing Batches (Realistic Variability)}
 \usage{
-simulate_pharma_batches(obs_por_lote = 10)
+simulate_pharma_batches(obs_por_lote = 10, seed = 301)
 }
 \arguments{
-\item{obs_por_lote}{Integer. Number of observations (samples) per batch. Default is 10.}
+\item{obs_por_lote}{Integer. Number of observations per batch. Default is 10.}
+
+\item{seed}{Optional integer. If provided, sets a random seed for reproducibility.}
 }
 \value{
-A data frame with columns: Batch, Fase, Status, Concentration, Humidity, Dissolution, Density.
+A data frame with 150 observations and the following columns:
+\describe{
+\item{Batch}{Factor. Batch identifier (Batch_1 to Batch_15).}
+\item{Fase}{Factor. Phase of the process: "Fase 1" or "Fase 2".}
+\item{Status}{Factor. Control status: "Under Control" or "Out of Control".}
+\item{Concentration, Humidity, Dissolution, Density}{Numeric quality control variables.}
+}
 }
 \description{
-This function generates simulated data for a pharmaceutical manufacturing process.
-It includes 10 in-control batches for Phase 1 and 7 additional batches for Phase 2,
-where 4 are under control and 3 are out of control.
+Simulates pharmaceutical manufacturing batches across two phases.
+Phase 1 includes 10 under-control batches, each with natural variability in mean and covariance.
+Phase 2 includes 2 clean under-control batches and 3 out-of-control batches
+with shifted mean, increased dispersion, and moderate contamination.
+}
+\details{
+The simulated data includes four quality control variables: Concentration, Humidity, Dissolution, and Density.
 }

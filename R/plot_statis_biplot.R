@@ -27,22 +27,25 @@
 #' @importFrom forcats fct_inorder
 #'
 #' @examples
-#' data("datos_farma")
+#' # Simulate pharmaceutical manufacturing batches
+#' datos <- simulate_pharma_batches()
+#'
+#' # Apply robust STATIS Dual to Phase 1 under control batches
 #' phase1_result <- robust_statis_phase1(
-#'   subset(datos_farma, Fase == "Fase 1" & Status == "Under Control"),
+#'   data = subset(datos, Fase == "Fase 1" & Status == "Under Control"),
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 #' )
 #'
-#' # Biplot básico
+#' # Basic biplot
 #' plot_statis_biplot(phase1_result)
 #'
-#' # Biplot coloreado por pesos del STATIS
+#' # Colored by STATIS weights
 #' plot_statis_biplot(phase1_result, color_by = "weight")
 #'
-#' # Biplot coloreado por estadístico Chi² robusto por lote
+#' # Colored by Chi² robust statistics
 #' plot_statis_biplot(phase1_result, color_by = "distance")
 #'
-#' # Biplot destacando algunos lotes
+#' # Highlighting specific batches
 #' plot_statis_biplot(phase1_result, highlight_batches = c("Batch_1", "Batch_10"))
 plot_statis_biplot <- function(phase1_result,
                                dims = c(1, 2),
@@ -102,44 +105,29 @@ plot_statis_biplot <- function(phase1_result,
   g <- ggplot() +
     geom_hline(yintercept = 0, linetype = "solid", color = "grey30") +
     geom_vline(xintercept = 0, linetype = "solid", color = "grey30") +
-
-    # Flechas de variables
     geom_segment(data = df_vars,
                  aes(x = 0, y = 0, xend = V1 * 1.2, yend = V2 * 1.2),
                  arrow = arrow(length = unit(0.25, "cm"), type = "closed"),
                  color = "brown", linewidth = 1) +
-
-    # Etiquetas de variables
     ggrepel::geom_text_repel(data = df_vars,
                              aes(x = V1 * 1.3, y = V2 * 1.3, label = Variable),
                              color = "brown", size = 4.5, fontface = "bold") +
-
-    # Puntos de lotes
     geom_point(data = df_batches,
                aes(x = V1, y = V2, color = Color, size = Size)) +
-
-    # Etiquetas de lotes
     ggrepel::geom_text_repel(data = df_batches,
                              aes(x = V1, y = V2, label = Batch),
                              size = 3, color = "black") +
-
-    # Solo punto rojo del compromiso
     geom_point(data = df_compromise,
                aes(x = V1, y = V2),
                color = "red", size = 4) +
-
-    # Etiqueta debajo del punto rojo
     geom_text(data = df_compromise,
               aes(x = V1, y = V2, label = Label),
               color = "red", fontface = "bold", size = 4, vjust = 1.8) +
-
-    # Escalas y estilos
     { if (color_by != "none") scale_color_viridis_c(
       name = ifelse(color_by == "weight", "STATIS Weight", "Chi^2 Distance"),
       option = "C", end = 0.9
     ) else scale_color_identity() } +
     scale_size_identity() +
-
     labs(
       title = "GH-Biplot - Robust STATIS Dual Compromise",
       x = paste0("Dim ", dims[1], " (", var_explained[1], "%)"),
@@ -157,4 +145,3 @@ plot_statis_biplot <- function(phase1_result,
 }
 
 utils::globalVariables(c("V1", "V2", "Variable", "Color", "Batch", "Size", "Label"))
-
