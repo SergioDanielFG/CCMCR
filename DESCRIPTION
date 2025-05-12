@@ -1,17 +1,12 @@
 Package: CCMCR
-Title: Multivariate Chi-Square and Robust Covariance Control Chart
-    (CC-MCR)
+Title: Title: Robust Multivariate Control Chart Based on STATIS Dual (CCMCR)
 Version: 0.1.0
 Authors@R: c(
     person("Sergio Daniel", "Frutos Galarza", , "sergio_dan88@hotmail.com", role = c("aut", "cre")),
     person("Omar", "Ruiz Barzola", , "oruiz@espol.edu.ec", role = "aut"),
     person("Purificación", "Galindo Villardón", , "pgalindo@usal.es", role = "aut")
   )
-Description: The CC-MCR is a multivariate control chart designed to
-    monitor processes with multiple interrelated variables. Unlike
-    traditional charts, this approach uses a QQ statistic based on the
-    chi-square distribution and employs robust estimators to handle
-    outliers and non-normal data.
+Description:CCMCR implements a robust multivariate control chart designed to monitor processes with multiple interrelated quantitative variables. The methodology is based on a robust adaptation of the STATIS Dual approach, which constructs a compromise covariance matrix from batch-level robust estimators. For each batch, a robust Hotelling T² statistic is computed using the global robust center and the compromise matrix, and compared to a chi-square threshold to detect out-of-control behavior. The package includes functions for batch data simulation, robust standardization, control chart visualization, GH-biplot representation, and an interactive Shiny dashboard.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
