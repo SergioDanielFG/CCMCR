@@ -131,7 +131,7 @@ robust_statis_phase1 <- function(data, variables) {
 
   # Computation of global medians and MADs for Phase 2
   global_medians <- apply(data[, variables], 2, median)
-  global_mads <- apply(data[, variables], 2, mad)  # Default scaling: constant = 1.4826
+  global_mads <- apply(data[, variables], 2, mad)  # Scaling: constant = 1.4826
 
   return(list(
     compromise_matrix = compromise_matrix,
