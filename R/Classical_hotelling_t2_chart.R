@@ -1,65 +1,36 @@
-#' Classical Hotelling T2 Chart - Phase 1 (Contaminated Batches)
+#' Classical Hotelling T2 Chart - Phase 1
 #'
-#' Applies the classical Hotelling T2 methodology to Phase 1 data (contaminated under-control batches),
-#' using standard mean and covariance estimators without robust corrections.
+#' Applies the classical Hotelling T2 methodology to Phase 1 data,
+#' using the sample mean and covariance matrix.
 #'
-#' @param data A data frame containing Phase 1 data (contaminated under-control batches).
+#' @param data A data frame containing Phase 1 data (under control batches).
 #' @param variables A character vector with the names of the quantitative variables to be used.
 #'
-#' @return A list containing:
-#' \describe{
-#'   \item{center}{Classical center (mean vector) estimated from Phase 1 batches.}
-#'   \item{covariance}{Classical covariance matrix estimated from Phase 1 batches.}
-#'   \item{batch_statistics}{A data frame with Batch and T2_Stat (classical Hotelling-type T2 statistic).}
-#'   \item{threshold}{Chi-squared control limit at the 0.9973 quantile, degrees of freedom equal to the number of variables.}
-#' }
-#'
-#' @importFrom stats cov qchisq
+#' @return A list with:
+#'   - center: classical mean vector
+#'   - covariance: classical covariance matrix
+#'   - batch_statistics: data frame with T2_Stat per batch
+#'   - threshold: Chi-squared control limit (0.9973 quantile)
 #' @export
-#'
-#' @examples
-#' # Simulate pharmaceutical manufacturing batches
-#' datos <- simulate_pharma_batches()
-#'
-#' # Phase 1 analysis: use Phase 1 data
-#' phase1_data <- subset(datos, Fase == "Fase 1")
-#'
-#' # Apply classical Hotelling T2 methodology
-#' t2_result <- hotelling_t2_phase1(
-#'   data = phase1_data,
-#'   variables = c("Concentration", "Humidity", "Dissolution", "Density")
-#' )
-#'
-#' # View main outputs
-#' t2_result$batch_statistics
-#' t2_result$threshold
-
 hotelling_t2_phase1 <- function(data, variables) {
   batches <- unique(data$Batch)
   p <- length(variables)
 
-  # Compute classical center (mean vector) and covariance matrix
   classical_center <- colMeans(data[, variables])
   classical_covariance <- cov(data[, variables])
 
-  # Initialize data frame for batch statistics
   batch_statistics <- data.frame(Batch = character(), T2_Stat = numeric(), stringsAsFactors = FALSE)
 
-  # Compute Hotelling T2 statistic per batch
   for (batch in batches) {
     subset_batch <- data[data$Batch == batch, variables]
     n_b <- nrow(subset_batch)
     batch_mean <- colMeans(subset_batch)
     diff <- batch_mean - classical_center
     T2_b <- n_b * t(diff) %*% solve(classical_covariance) %*% diff
-    batch_statistics <- rbind(batch_statistics, data.frame(
-      Batch = as.character(batch),
-      T2_Stat = as.numeric(T2_b),
-      stringsAsFactors = FALSE
-    ))
+    batch_statistics <- rbind(batch_statistics,
+                              data.frame(Batch = as.character(batch), T2_Stat = as.numeric(T2_b)))
   }
 
-  # Compute Chi-squared control limit
   threshold <- qchisq(0.9973, df = p)
 
   return(list(
@@ -69,3 +40,60 @@ hotelling_t2_phase1 <- function(data, variables) {
     threshold = threshold
   ))
 }
+
+
+#' Classical Hotelling T2 Chart - Phase 2
+#'
+#' Evaluates new batches (Phase 2) using T2 statistics based on Phase 1 estimators.
+#'
+#' @param new_data A data frame with new batches to evaluate (Phase 2).
+#' @param variables Character vector of quantitative variables.
+#' @param center Mean vector from Phase 1.
+#' @param covariance Covariance matrix from Phase 1.
+#'
+#' @return A list with:
+#'   - batch_statistics: data frame with T2_Stat per new batch
+#'   - threshold: Chi-squared control limit (0.9973 quantile)
+#' @export
+hotelling_t2_phase2 <- function(new_data, variables, center, covariance) {
+  batches <- unique(new_data$Batch)
+  p <- length(variables)
+
+  batch_statistics <- data.frame(Batch = character(), T2_Stat = numeric(), stringsAsFactors = FALSE)
+
+  for (batch in batches) {
+    subset_batch <- new_data[new_data$Batch == batch, variables]
+    n_b <- nrow(subset_batch)
+    batch_mean <- colMeans(subset_batch)
+    diff <- batch_mean - center
+    T2_b <- n_b * t(diff) %*% solve(covariance) %*% diff
+    batch_statistics <- rbind(batch_statistics,
+                              data.frame(Batch = as.character(batch), T2_Stat = as.numeric(T2_b)))
+  }
+
+  threshold <- qchisq(0.9973, df = p)
+
+  return(list(
+    batch_statistics = batch_statistics,
+    threshold = threshold
+  ))
+}
+
+#' @examples
+#' datos <- simulate_pharma_batches()
+#' phase1_data <- subset(datos, Fase == "Fase 1")
+#' phase2_data <- subset(datos, Fase == "Fase 2")
+#'
+#' # Phase 1 classical Hotelling T2
+#' t2_phase1 <- hotelling_t2_phase1(
+#'   data = phase1_data,
+#'   variables = c("Concentration", "Humidity", "Dissolution", "Density")
+#' )
+#'
+#' # Phase 2 evaluation using Phase 1 estimators
+#' t2_phase2 <- hotelling_t2_phase2(
+#'   new_data = phase2_data,
+#'   variables = c("Concentration", "Humidity", "Dissolution", "Density"),
+#'   center = t2_phase1$center,
+#'   covariance = t2_phase1$covariance
+#' )

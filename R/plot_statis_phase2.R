@@ -54,23 +54,24 @@ plot_statis_phase2_chart <- function(phase1_result, phase2_result,
 
   combined <- rbind(df1, df2)
   combined$Batch <- forcats::fct_inorder(combined$Batch)
+  combined$Status <- factor(combined$Status, levels = c("Under Control", "Out of Control"))
 
   ggplot(combined, aes(x = Batch, y = Chi2_Stat, color = Status, group = 1)) +
     geom_point(size = 3) +
     geom_line(linewidth = 0.8) +
 
-    # Labels for under control batches
+    # Labels for under control
     geom_text(
       data = subset(combined, Status == "Under Control"),
       aes(label = round(Chi2_Stat, 1)),
       color = "black", vjust = 2, size = 3.2, show.legend = FALSE
     ) +
 
-    # Labels for out-of-control batches
+    # Labels for out of control
     geom_text(
       data = subset(combined, Status == "Out of Control"),
       aes(label = round(Chi2_Stat, 1)),
-      color = "#B22222", fontface = "bold", vjust = 2, size = 3.5, show.legend = FALSE
+      color = "black", vjust = 2, size = 3.2, show.legend = FALSE
     ) +
 
     geom_hline(yintercept = phase2_result$threshold, linetype = "dashed", color = "red", linewidth = 0.8) +
@@ -79,10 +80,13 @@ plot_statis_phase2_chart <- function(phase1_result, phase2_result,
              label = paste0("UCL = ", round(phase2_result$threshold, 1)),
              hjust = 1.1, vjust = -1.2, color = "red", size = 4) +
 
+    scale_color_manual(values = c("Under Control" = "#00C8D7", "Out of Control" = "#B22222")) +
+
     labs(
       title = title,
       x = "Batch",
-      y = expression(chi^2 ~ "(Hotelling~T^2~per~Batch)")
+      y = expression(chi^2 ~ "(Hotelling~T^2~per~Batch)"),
+      color = "Status"
     ) +
     theme_minimal(base_size = 13) +
     theme(

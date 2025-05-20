@@ -4,7 +4,7 @@
 \alias{simulate_pharma_batches}
 \title{Simulate Pharmaceutical Manufacturing Batches (Realistic Variability)}
 \usage{
-simulate_pharma_batches(obs_por_lote = 10, seed = 301)
+simulate_pharma_batches(obs_por_lote = 10, seed = 308)
 }
 \arguments{
 \item{obs_por_lote}{Integer. Number of observations per batch. Default is 10.}

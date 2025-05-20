@@ -24,7 +24,7 @@
 #' @importFrom stats rnorm
 #' @importFrom Matrix nearPD
 
-simulate_pharma_batches <- function(obs_por_lote = 10, seed = 301) {
+simulate_pharma_batches <- function(obs_por_lote = 10, seed = 308) {
   if (!is.null(seed)) set.seed(seed)
 
   # Reference mean and covariance under control
@@ -76,8 +76,8 @@ simulate_pharma_batches <- function(obs_por_lote = 10, seed = 301) {
   }))
 
   # Phase 2: 3 out-of-control batches with shifted mean and increased dispersion + contamination
-  mu_out_fase2 <- c(97, 2.7, 305, 0.4)
-  sigma_out_fase2 <- sigma_control * 2
+  mu_out_fase2 <- c(97, 2.6, 303, 0.4)
+  sigma_out_fase2 <- sigma_control * 4
   out_fase2 <- dplyr::bind_rows(lapply(13:15, function(batch) {
     base_out <- MASS::mvrnorm(obs_por_lote, mu_out_fase2, sigma_out_fase2)
     contaminated_out <- contaminate(base_out)
