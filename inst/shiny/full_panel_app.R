@@ -1,5 +1,3 @@
-# app.R - STATIS Dual Robust Control Dashboard (FUNCIONAL)
-
 library(shiny)
 library(ggplot2)
 library(shinythemes)
@@ -19,8 +17,10 @@ ui <- fluidPage(
       tabsetPanel(
         tabPanel("Robust Phase 1", plotOutput("phase1_plot", height = "500px")),
         tabPanel("Robust Phase 2", plotOutput("phase2_plot", height = "500px")),
-        tabPanel("GH-Biplot", plotOutput("biplot", height = "500px")),
-        tabPanel("Classical Hotelling T²", plotOutput("classic_plot", height = "500px"))
+        tabPanel("GH-Biplot (Fase 1)", plotOutput("biplot", height = "500px")),
+        tabPanel("Projection Biplot (Fase 2)", plotOutput("projection_biplot", height = "500px")),
+        tabPanel("Hotelling T² Clásico - Fase 1", plotOutput("classic_phase1", height = "500px")),
+        tabPanel("Hotelling T² Clásico - Fase 2", plotOutput("classic_phase2", height = "500px"))
       )
     )
   )
@@ -29,60 +29,78 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   vars <- c("Concentration", "Humidity", "Dissolution", "Density")
 
-  # Usar simulación directamente
+  # Datos simulados
   datos_simulados <- simulate_pharma_batches()
 
-  # Robust Phase 1 (solo lotes bajo control de Fase 1)
+  # Fase 1 robusta
   phase1_data <- subset(datos_simulados, Fase == "Fase 1" & Status == "Under Control")
-  phase1 <- robust_statis_phase1(data = phase1_data, variables = vars)
+  phase1 <- reactive({
+    robust_statis_phase1(data = phase1_data, variables = vars)
+  })
 
-  # Robust Phase 2 (lotes nuevos de Fase 2)
+  # Fase 2 robusta
   phase2_data <- subset(datos_simulados, Fase == "Fase 2")
-  phase2 <- robust_statis_phase2(
-    new_data = phase2_data,
-    variables = vars,
-    medians = phase1$global_medians,
-    mads = phase1$global_mads,
-    compromise_matrix = phase1$compromise_matrix,
-    global_center = phase1$global_center
+  phase2 <- reactive({
+    robust_statis_phase2(
+      new_data = phase2_data,
+      variables = vars,
+      medians = phase1()$global_medians,
+      mads = phase1()$global_mads,
+      compromise_matrix = phase1()$compromise_matrix,
+      global_center = phase1()$global_center
+    )
+  })
+
+  # Hotelling clásico - Fase 1
+  classical_f1 <- hotelling_t2_phase1(
+    data = subset(datos_simulados, Fase == "Fase 1"),
+    variables = vars
   )
 
-  # Classical Hotelling T² (con todos los lotes de Fase 1, contaminados)
-  classical <- hotelling_t2_phase1(data = subset(datos_simulados, Fase == "Fase 1"), variables = vars)
+  # Hotelling clásico - Fase 2
+  classical_f2 <- hotelling_t2_phase2(
+    new_data = phase2_data,
+    variables = vars,
+    center = classical_f1$center,
+    covariance = classical_f1$covariance
+  )
+
+  # Estado de Fase 2
+  status_f2 <- unique(phase2_data[, c("Batch", "Status")])
+  classical_f2$batch_statistics <- merge(classical_f2$batch_statistics, status_f2, by = "Batch")
 
   # Gráfico robusto Fase 1
   output$phase1_plot <- renderPlot({
-    plot_statis_phase1_chart(
-      batch_statistics = phase1$batch_statistics,
-      num_vars = length(vars)
-    )
+    plot_statis_phase1_chart(batch_statistics = phase1()$batch_statistics, num_vars = length(vars))
   })
 
-  # Gráfico robusto Fase 2 (Fase 1 + Fase 2)
+  # Gráfico robusto Fase 2
   output$phase2_plot <- renderPlot({
-    plot_statis_phase2_chart(
-      phase1_result = phase1,
-      phase2_result = phase2
-    )
+    plot_statis_phase2_chart(phase1_result = phase1(), phase2_result = phase2())
   })
 
-  # GH-Biplot
+  # GH-Biplot Fase 1
   output$biplot <- renderPlot({
-    plot_statis_biplot(
-      phase1_result = phase1,
-      color_by = input$color_by
+    plot_statis_biplot(phase1_result = phase1(), color_by = input$color_by)
+  })
+
+  # Biplot de proyección Fase 2
+  output$projection_biplot <- renderPlot({
+    plot_statis_biplot_projection(
+      phase1_result = phase1(),
+      phase2_result = phase2()
     )
   })
 
-  # Gráfico clásico T²
-  output$classic_plot <- renderPlot({
-    plot_classical_hotelling_t2_chart(
-      t2_statistics = classical$batch_statistics,
-      num_vars = length(vars)
-    )
+  # Gráfico clásico T² - Fase 1
+  output$classic_phase1 <- renderPlot({
+    plot_classical_hotelling_t2_chart(t2_statistics = classical_f1$batch_statistics, num_vars = length(vars))
+  })
+
+  # Gráfico clásico T² - Fase 2
+  output$classic_phase2 <- renderPlot({
+    plot_classical_hotelling_t2_phase2_chart(t2_statistics = classical_f2$batch_statistics, num_vars = length(vars))
   })
 }
 
-# Lanzar aplicación
 app <- shinyApp(ui = ui, server = server)
-

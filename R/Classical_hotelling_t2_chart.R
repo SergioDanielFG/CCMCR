@@ -12,6 +12,7 @@
 #'   - batch_statistics: data frame with T2_Stat per batch
 #'   - threshold: Chi-squared control limit (0.9973 quantile)
 #' @export
+#' @keywords internal
 hotelling_t2_phase1 <- function(data, variables) {
   batches <- unique(data$Batch)
   p <- length(variables)
@@ -55,6 +56,7 @@ hotelling_t2_phase1 <- function(data, variables) {
 #'   - batch_statistics: data frame with T2_Stat per new batch
 #'   - threshold: Chi-squared control limit (0.9973 quantile)
 #' @export
+#' @keywords internal
 hotelling_t2_phase2 <- function(new_data, variables, center, covariance) {
   batches <- unique(new_data$Batch)
   p <- length(variables)

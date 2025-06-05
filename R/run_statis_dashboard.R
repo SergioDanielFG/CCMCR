@@ -9,22 +9,26 @@
 #'
 #' @examples
 #' if (interactive()) {
-#'   # Launches the full STATIS Dual Robust monitoring dashboard with:
-#'   # - Phase 1 control chart
-#'   # - Phase 2 control chart
-#'   # - GH-Biplot
-#'   #
-#'   # Uses the internal dataset: datos_farma
 #'   run_statis_dashboard()
 #' }
 
 run_statis_dashboard <- function() {
   app_dir <- system.file("shiny", "full_panel_app.R", package = "CCMCR")
   if (app_dir == "") {
-    stop("Shiny app script not found. Did you forget to install the package with inst/?")
+    stop("Shiny app script not found. Did you forget to install the package with inst/shiny?")
   }
-  source(app_dir, local = TRUE)
-  shiny::runApp(app)
+
+  # Crea un nuevo entorno para cargar el app
+  app_env <- new.env()
+  sys.source(app_dir, envir = app_env)
+
+  # Verifica si el objeto 'app' fue definido
+  if (!exists("app", envir = app_env)) {
+    stop("Object 'app' not found in loaded app script.")
+  }
+
+  # Ejecuta la app desde el entorno
+  shiny::runApp(app_env$app)
 }
 
 utils::globalVariables("app")

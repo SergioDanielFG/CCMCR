@@ -25,3 +25,4 @@ A list with:
 \description{
 Evaluates new batches (Phase 2) using T2 statistics based on Phase 1 estimators.
 }
+\keyword{internal}

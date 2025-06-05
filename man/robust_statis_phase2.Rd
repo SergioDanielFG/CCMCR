@@ -65,3 +65,4 @@ result_phase2 <- robust_statis_phase2(
 result_phase2$chi_stats_by_batch
 result_phase2$threshold
 }
+\keyword{internal}

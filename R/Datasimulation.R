@@ -24,14 +24,14 @@
 #' @importFrom stats rnorm
 #' @importFrom Matrix nearPD
 
-simulate_pharma_batches <- function(obs_por_lote = 10, seed = 308) {
+simulate_pharma_batches <- function(obs_por_lote = 10, seed = 307) {
   if (!is.null(seed)) set.seed(seed)
 
   # Reference mean and covariance under control
   mu_control <- c(98, 2.5, 300, 0.5)
   sigma_control <- matrix(c(2.0, 0.2, -5.0, 0.1,
                             0.2, 0.5, -2.0, 0.05,
-                            -5.0, -2.0, 50.0, -0.5,
+                            -5.0, -2.0, 30.0, -0.5,
                             0.1, 0.05, -0.5, 0.02),
                           nrow = 4, byrow = TRUE)
 
@@ -76,8 +76,8 @@ simulate_pharma_batches <- function(obs_por_lote = 10, seed = 308) {
   }))
 
   # Phase 2: 3 out-of-control batches with shifted mean and increased dispersion + contamination
-  mu_out_fase2 <- c(97, 2.6, 303, 0.4)
-  sigma_out_fase2 <- sigma_control * 4
+  mu_out_fase2 <- c(90, 4.0, 315, 1.8)
+  sigma_out_fase2 <- sigma_control * 0.5
   out_fase2 <- dplyr::bind_rows(lapply(13:15, function(batch) {
     base_out <- MASS::mvrnorm(obs_por_lote, mu_out_fase2, sigma_out_fase2)
     contaminated_out <- contaminate(base_out)
@@ -96,5 +96,12 @@ simulate_pharma_batches <- function(obs_por_lote = 10, seed = 308) {
   datos$Status <- factor(datos$Status, levels = c("Under Control", "Out of Control"))
   datos$Fase <- factor(datos$Fase, levels = c("Fase 1", "Fase 2"))
 
+  # Truncate negative values for physical consistency
+  datos$Concentration <- pmax(datos$Concentration, 0)
+  datos$Humidity <- pmax(datos$Humidity, 0)
+  datos$Dissolution <- pmax(datos$Dissolution, 0)
+  datos$Density <- pmax(datos$Density, 0)
+
   return(datos)
 }
+

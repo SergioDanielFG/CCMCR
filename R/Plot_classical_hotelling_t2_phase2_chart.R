@@ -12,7 +12,7 @@
 #' @export
 #'
 #' @import ggplot2
-#' @importFrom stats qchisq
+#' @importFrom stats qchisq cov
 #' @importFrom forcats fct_inorder
 #'
 #' @examples

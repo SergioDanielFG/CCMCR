@@ -19,6 +19,7 @@
 #' }
 #'
 #' @export
+#' @keywords internal
 #' @importFrom stats qchisq
 #'
 #' @examples

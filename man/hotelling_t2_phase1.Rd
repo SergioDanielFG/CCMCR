@@ -24,3 +24,4 @@ A list with:
 Applies the classical Hotelling T2 methodology to Phase 1 data,
 using the sample mean and covariance matrix.
 }
+\keyword{internal}
