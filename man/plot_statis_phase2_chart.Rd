@@ -2,43 +2,32 @@
 % Please edit documentation in R/plot_statis_phase2.R
 \name{plot_statis_phase2_chart}
 \alias{plot_statis_phase2_chart}
-\title{Plot STATIS Dual Robust Control Chart - Phase 2 (All Batches)}
+\title{Plot STATIS Dual Robust Control Chart - Phase 2 Only}
 \usage{
 plot_statis_phase2_chart(
-  phase1_result,
   phase2_result,
-  title = "Robust STATIS Dual Control Chart - All Batches"
+  title = "Robust STATIS Dual Control Chart - Phase 2"
 )
 }
 \arguments{
-\item{phase1_result}{A list returned by \code{robust_statis_phase1()}, which includes
-\code{batch_statistics} with Chi-squared values for Phase 1 batches.}
-
 \item{phase2_result}{A list returned by \code{robust_statis_phase2()}, including
 \code{chi_stats_by_batch} with Hotelling T² values and a control \code{threshold}.}
 
 \item{title}{Optional string. Plot title.}
 }
 \value{
-A ggplot2 object representing the control chart with all batches (Fase 1 y Fase 2).
+A ggplot2 object representing the control chart for Phase 2 batches.
 }
 \description{
-Plots the Chi-squared statistics for both Phase 1 and Phase 2 batches,
-using the robust Hotelling T² statistic per batch. Batches from Phase 1 are assumed
-to be under control and those from Phase 2 are evaluated against the control threshold
-obtained from a chi-squared distribution with df equal to the number of variables.
+Plots the robust Hotelling T² statistics for Phase 2 batches only,
+using the results from the robust STATIS Dual method.
 }
 \examples{
-# Simulate pharmaceutical manufacturing batches
 datos <- simulate_pharma_batches()
-
-# Phase 1 analysis: select under control batches
 phase1 <- robust_statis_phase1(
   data = subset(datos, Fase == "Fase 1" & Status == "Under Control"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 )
-
-# Phase 2 evaluation: new batches
 phase2 <- robust_statis_phase2(
   new_data = subset(datos, Fase == "Fase 2"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density"),
@@ -47,7 +36,5 @@ phase2 <- robust_statis_phase2(
   compromise_matrix = phase1$compromise_matrix,
   global_center = phase1$global_center
 )
-
-# Plot Phase 1 + Phase 2 control chart
-plot_statis_phase2_chart(phase1, phase2)
+plot_statis_phase2_chart(phase2_result = phase2)
 }

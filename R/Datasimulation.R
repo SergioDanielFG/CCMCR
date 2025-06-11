@@ -24,7 +24,7 @@
 #' @importFrom stats rnorm
 #' @importFrom Matrix nearPD
 
-simulate_pharma_batches <- function(obs_por_lote = 10, seed = 307) {
+simulate_pharma_batches <- function(obs_por_lote = 10, seed = NULL) {
   if (!is.null(seed)) set.seed(seed)
 
   # Reference mean and covariance under control
