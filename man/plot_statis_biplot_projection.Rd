@@ -2,46 +2,36 @@
 % Please edit documentation in R/plot_statis_biplot_projection.R
 \name{plot_statis_biplot_projection}
 \alias{plot_statis_biplot_projection}
-\title{STATIS Dual Biplot Projection for Phase 2 Batches}
+\title{HJ-Biplot Projection - Robust STATIS Dual (Fase 2)}
 \usage{
 plot_statis_biplot_projection(phase1_result, phase2_result, dims = c(1, 2))
 }
 \arguments{
-\item{phase1_result}{A list returned by \code{robust_statis_phase1()}, which includes
-\code{compromise_matrix} and \code{global_center}.}
+\item{phase1_result}{Result from \code{robust_statis_phase1()}.}
 
-\item{phase2_result}{A list returned by \code{robust_statis_phase2()}, which includes
-\code{standardized_data} (Phase 2 batches already standardized).}
+\item{phase2_result}{Result from \code{robust_statis_phase2()} (must include standardized_data and chi_stats_by_batch).}
 
-\item{dims}{Numeric vector of length 2 indicating the dimensions to plot (default: c(1, 2)).}
+\item{dims}{Dimensions to plot (default: c(1, 2)).}
 }
 \value{
-A ggplot2 object showing Phase 2 batch centers projected onto the STATIS space.
+A ggplot2 object with the projected HJ-Biplot for Phase 2 batches.
 }
 \description{
-Projects Phase 2 batch centers onto the reduced space defined by the compromise matrix
-obtained in Phase 1 (from \code{robust_statis_phase1()}).
-Only Phase 2 batches are displayed, enabling visual detection of shifts or anomalies
-relative to the robust reference structure.
-}
-\details{
-This is not a GH-Biplot in sentido estricto, ya que no se recalcula una nueva base.
-En su lugar, utiliza la base de la matriz de compromiso obtenida en la Fase 1 y proyecta
-los nuevos lotes sobre ella, manteniendo la estructura estadística robusta original.
+Projects new batches from Phase 2 into the HJ-Biplot space defined by the robust compromise matrix
+and eigen decomposition from Phase 1.
 }
 \examples{
-# Simulate data
 datos <- simulate_pharma_batches()
+phase1_data <- subset(datos, Fase == "Fase 1" & Status == "Under Control")
+phase2_data <- subset(datos, Fase == "Fase 2")
 
-# Apply Phase 1 (STATIS Dual robust)
 phase1 <- robust_statis_phase1(
-  data = subset(datos, Fase == "Fase 1" & Status == "Under Control"),
+  data = phase1_data,
   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 )
 
-# Apply Phase 2
 phase2 <- robust_statis_phase2(
-  new_data = subset(datos, Fase == "Fase 2"),
+  new_data = phase2_data,
   variables = c("Concentration", "Humidity", "Dissolution", "Density"),
   medians = phase1$global_medians,
   mads = phase1$global_mads,
@@ -49,6 +39,5 @@ phase2 <- robust_statis_phase2(
   global_center = phase1$global_center
 )
 
-# Plot projection biplot of Phase 2 batches
-plot_statis_biplot_projection(phase1_result = phase1, phase2_result = phase2)
+plot_statis_biplot_projection(phase1, phase2)
 }

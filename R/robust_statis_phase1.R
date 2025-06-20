@@ -143,8 +143,8 @@ robust_statis_phase1 <- function(data, variables) {
     global_mads = global_mads,
     robust_means = robust_means,
     standardized_data = standardized_data,
-    robust_covariances = cov_matrices,
     similarity_matrix = S,
+    robust_covariances = cov_matrices,
     statis_weights = weights,
     first_eigenvector = first_eigenvector
   ))

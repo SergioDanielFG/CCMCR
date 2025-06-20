@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_statis_biplot.R
 \name{plot_statis_hj_biplot}
 \alias{plot_statis_hj_biplot}
-\title{HJ-Biplot of Robust STATIS Dual Compromise (Galindo-Villardón Biplot)}
+\title{HJ-Biplot of Robust STATIS Dual Compromise (Galindo-Villardón)}
 \usage{
 plot_statis_hj_biplot(
   phase1_result,
@@ -12,36 +12,27 @@ plot_statis_hj_biplot(
 )
 }
 \arguments{
-\item{phase1_result}{Result from \code{robust_statis_phase1()}, must include \code{compromise_matrix},
-\code{robust_means}, \code{batch_statistics}, and \code{global_center}.}
+\item{phase1_result}{Result from \code{robust_statis_phase1()}.}
 
-\item{dims}{Numeric vector of length 2 indicating the dimensions to plot (default: c(1, 2)).}
+\item{dims}{Dimensions to plot (default: c(1, 2)).}
 
-\item{color_by}{Optional string to color batches: "none" (default), "weight" (from STATIS weights), or "distance" (Chi² stat).}
+\item{color_by}{One of "none", "weight", or "distance" for coloring batches.}
 
-\item{highlight_batches}{Optional: Vector of batch names to enlarge and emphasize.}
+\item{highlight_batches}{Optional vector of batch names to emphasize.}
 }
 \value{
-A ggplot2 object representing the HJ-Biplot.
+ggplot2 object with HJ-Biplot.
 }
 \description{
 Generates an HJ-Biplot using the compromise matrix obtained
-from robust STATIS Dual (without trace normalization). It represents variables
-as vectors (axes) and batch centers as projected points in a reduced 2D space.
-}
-\details{
-This biplot enables visual interpretation of how batch centers relate to
-the compromise structure derived from robust covariance matrices. Variables
-are represented as vectors from the origin, while batch centers are projected
-using the HJ-Biplot formulation (UΣ and ΣV).
-
-Reference: Galindo-Villardón, M. P. (1986). "Una alternativa de representación simultánea: HJ-Biplot." Qüestió, 10(1), 13–23.
+from robust STATIS Dual. Individuals (batch centers) are projected as G = U D,
+and variables as H = V D, where D is the diagonal matrix of square roots of eigenvalues.
 }
 \examples{
 datos <- simulate_pharma_batches()
-phase1_result <- robust_statis_phase1(
+phase1 <- robust_statis_phase1(
   data = subset(datos, Fase == "Fase 1" & Status == "Under Control"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 )
-plot_statis_hj_biplot(phase1_result)
+plot_statis_hj_biplot(phase1)
 }
