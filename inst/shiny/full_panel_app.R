@@ -17,7 +17,7 @@ ui <- fluidPage(
       tabsetPanel(
         tabPanel("Robust Phase 1", plotOutput("phase1_plot", height = "500px")),
         tabPanel("Robust Phase 2", plotOutput("phase2_plot", height = "500px")),
-        tabPanel("GH-Biplot (Fase 1)", plotOutput("biplot", height = "500px")),
+        tabPanel("HJ-Biplot (Fase 1)", plotOutput("biplot", height = "500px")),
         tabPanel("Projection Biplot (Fase 2)", plotOutput("projection_biplot", height = "500px")),
         tabPanel("Hotelling T² Clásico - Fase 1", plotOutput("classic_phase1", height = "500px")),
         tabPanel("Hotelling T² Clásico - Fase 2", plotOutput("classic_phase2", height = "500px"))
@@ -76,12 +76,12 @@ server <- function(input, output, session) {
 
   # Gráfico robusto Fase 2
   output$phase2_plot <- renderPlot({
-    plot_statis_phase2_chart(phase1_result = phase1(), phase2_result = phase2())
+    plot_statis_phase2_chart(phase2_result = phase2())
   })
 
-  # GH-Biplot Fase 1
+  # HJ-Biplot Fase 1
   output$biplot <- renderPlot({
-    plot_statis_biplot(phase1_result = phase1(), color_by = input$color_by)
+    plot_statis_hj_biplot(phase1_result = phase1(), color_by = input$color_by)
   })
 
   # Biplot de proyección Fase 2
