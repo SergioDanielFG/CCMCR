@@ -9,7 +9,7 @@
 #'
 #' @return A ggplot2 object with the projected HJ-Biplot for Phase 2 batches.
 #' @export
-#'
+#' @importFrom stats aggregate
 #' @examples
 #' datos <- simulate_pharma_batches()
 #' phase1_data <- subset(datos, Fase == "Fase 1" & Status == "Under Control")
@@ -64,14 +64,16 @@ plot_statis_biplot_projection <- function(phase1_result, phase2_result, dims = c
   colnames(df_batches) <- c("V1", "V2")
   df_batches$Batch <- forcats::fct_inorder(rownames(df_batches))
 
-  # 4. Clasificación según distancia Chi² robusta
-  stats_phase2 <- phase2_result$chi_stats_by_batch
+  # 4. Clasificación según estadístico T² robusto
+  stats_phase2 <- phase2_result$t2_stats_by_batch
   ucl <- phase2_result$threshold
 
-  df_batches$Status <- ifelse(
-    stats_phase2$Chi2_Stat > ucl,
-    "Out of Control", "Under Control"
+   status_vec <- setNames(
+    ifelse(stats_phase2$T2_Stat > ucl, "Out of Control", "Under Control"),
+    stats_phase2$Batch
   )
+  df_batches$Status <- status_vec[as.character(df_batches$Batch)]
+
 
   df_batches$Color <- ifelse(df_batches$Status == "Out of Control", "brown", "#0072B2")
   df_batches$Size <- ifelse(df_batches$Status == "Out of Control", 4, 3)
@@ -120,6 +122,6 @@ plot_statis_biplot_projection <- function(phase1_result, phase2_result, dims = c
     )
 
   return(g)
-}
+  }
 
 utils::globalVariables(c("V1", "V2", "Variable", "Color", "Batch", "Size", "Status"))

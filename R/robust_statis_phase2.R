@@ -14,7 +14,7 @@
 #' @return A list containing:
 #' \describe{
 #'   \item{standardized_data}{Data frame with the new batches standardized using the global medians and scaled MADs (constant 1.4826).}
-#'   \item{chi_stats_by_batch}{Data frame with the Chi-squared statistics per batch (Hotelling-type \( T^2 \)).}
+#'   \item{t2_stats_by_batch}{Data frame with the Hotelling-type \( T^2 \) statistics per batch.}
 #'   \item{threshold}{Control limit based on the Chi-squared distribution (0.9973 quantile, degrees of freedom equal to the number of variables).}
 #' }
 #'
@@ -45,7 +45,7 @@
 #' )
 #'
 #' # View main outputs
-#' result_phase2$chi_stats_by_batch
+#' result_phase2$t2_stats_by_batch
 #' result_phase2$threshold
 
 robust_statis_phase2 <- function(new_data,
@@ -60,13 +60,13 @@ robust_statis_phase2 <- function(new_data,
 
   standardized_data <- new_data
 
-  # Global standardization using the global medians and scaled MADs from Phase 1
+  # Global standardization
   for (var in variables) {
     standardized_data[[var]] <- (new_data[[var]] - medians[[var]]) / mads[[var]]
   }
 
   batches <- unique(standardized_data$Batch)
-  chi_stats_by_batch <- data.frame(Batch = character(), Chi2_Stat = numeric())
+  t2_stats_by_batch <- data.frame(Batch = character(), T2_Stat = numeric())
 
   for (batch in batches) {
     subset_batch <- standardized_data[standardized_data$Batch == batch, variables]
@@ -74,9 +74,9 @@ robust_statis_phase2 <- function(new_data,
     x_b <- colMeans(subset_batch)
     diff <- x_b - global_center
     T2_b <- n_b * t(diff) %*% solve(compromise_matrix) %*% diff
-    chi_stats_by_batch <- rbind(chi_stats_by_batch, data.frame(
+    t2_stats_by_batch <- rbind(t2_stats_by_batch, data.frame(
       Batch = batch,
-      Chi2_Stat = as.numeric(T2_b)
+      T2_Stat = as.numeric(T2_b)
     ))
   }
 
@@ -84,7 +84,7 @@ robust_statis_phase2 <- function(new_data,
 
   return(list(
     standardized_data = standardized_data,
-    chi_stats_by_batch = chi_stats_by_batch,
+    t2_stats_by_batch = t2_stats_by_batch,
     threshold = threshold
   ))
 }

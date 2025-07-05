@@ -65,16 +65,16 @@ plot_statis_hj_biplot <- function(phase1_result,
                         phase1_result$batch_statistics$Batch)
     df_batches$Color <- weights[as.character(df_batches$Batch)]
   } else if (color_by == "distance") {
-    dists <- setNames(phase1_result$batch_statistics$Chi2_Stat,
+    dists <- setNames(phase1_result$batch_statistics$T2_Stat,
                       phase1_result$batch_statistics$Batch)
     df_batches$Color <- dists[as.character(df_batches$Batch)]
   } else {
     df_batches$Color <- "#0072B2"
   }
 
-  df_batches$Size <- ifelse(df_batches$Batch %in% highlight_batches, 4, 2.5)
+   df_batches$Size <- ifelse(df_batches$Batch %in% highlight_batches, 4, 2.5)
 
-  g <- ggplot() +
+   g <- ggplot() +
     geom_hline(yintercept = 0, color = "grey30") +
     geom_vline(xintercept = 0, color = "grey30") +
     geom_segment(data = df_vars,

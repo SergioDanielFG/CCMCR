@@ -30,7 +30,7 @@ robust_statis_phase2(
 A list containing:
 \describe{
 \item{standardized_data}{Data frame with the new batches standardized using the global medians and scaled MADs (constant 1.4826).}
-\item{chi_stats_by_batch}{Data frame with the Chi-squared statistics per batch (Hotelling-type \( T^2 \)).}
+\item{t2_stats_by_batch}{Data frame with the Hotelling-type \( T^2 \) statistics per batch.}
 \item{threshold}{Control limit based on the Chi-squared distribution (0.9973 quantile, degrees of freedom equal to the number of variables).}
 }
 }
@@ -62,7 +62,7 @@ result_phase2 <- robust_statis_phase2(
 )
 
 # View main outputs
-result_phase2$chi_stats_by_batch
+result_phase2$t2_stats_by_batch
 result_phase2$threshold
 }
 \keyword{internal}

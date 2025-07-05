@@ -11,7 +11,7 @@ plot_statis_phase2_chart(
 }
 \arguments{
 \item{phase2_result}{A list returned by \code{robust_statis_phase2()}, including
-\code{chi_stats_by_batch} with Hotelling T² values and a control \code{threshold}.}
+\code{t2_stats_by_batch} with Hotelling T² values and a control \code{threshold}.}
 
 \item{title}{Optional string. Plot title.}
 }

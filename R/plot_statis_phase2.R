@@ -4,7 +4,7 @@
 #' using the results from the robust STATIS Dual method.
 #'
 #' @param phase2_result A list returned by `robust_statis_phase2()`, including
-#' `chi_stats_by_batch` with Hotelling T² values and a control `threshold`.
+#' `t2_stats_by_batch` with Hotelling T² values and a control `threshold`.
 #' @param title Optional string. Plot title.
 #'
 #' @return A ggplot2 object representing the control chart for Phase 2 batches.
@@ -31,22 +31,22 @@
 
 plot_statis_phase2_chart <- function(phase2_result,
                                      title = "Robust STATIS Dual Control Chart - Phase 2") {
-  df2 <- phase2_result$chi_stats_by_batch
+  df2 <- phase2_result$t2_stats_by_batch
 
   # Verificar o construir la columna Status
   if (!"Status" %in% colnames(df2)) {
     df2$Status <- ifelse(grepl("13|14|15", df2$Batch), "Out of Control", "Under Control")
   }
 
-  df2 <- df2[, c("Batch", "Chi2_Stat", "Status")]
+  df2 <- df2[, c("Batch", "T2_Stat", "Status")]
   df2$Batch <- forcats::fct_inorder(df2$Batch)
   df2$Status <- factor(df2$Status, levels = c("Under Control", "Out of Control"))
 
-  ggplot(df2, aes(x = Batch, y = Chi2_Stat, color = Status, group = 1)) +
+  ggplot(df2, aes(x = Batch, y = T2_Stat, color = Status, group = 1)) +
     geom_point(size = 3) +
     geom_line(linewidth = 0.8) +
     geom_text(
-      aes(label = round(Chi2_Stat, 1)),
+      aes(label = round(T2_Stat, 1)),
       color = "black", vjust = 2, size = 3.2, show.legend = FALSE
     ) +
     geom_hline(yintercept = phase2_result$threshold, linetype = "dashed", color = "red", linewidth = 0.8) +
@@ -58,7 +58,7 @@ plot_statis_phase2_chart <- function(phase2_result,
     labs(
       title = title,
       x = "Batch",
-      y = expression(chi^2 ~ "(Hotelling~T^2~per~Batch)"),
+      y = expression(T^2 ~ "(Hotelling~per~Batch)"),
       color = "Status"
     ) +
     theme_minimal(base_size = 13) +
@@ -69,4 +69,4 @@ plot_statis_phase2_chart <- function(phase2_result,
     )
 }
 
-utils::globalVariables(c("Status", "Batch", "Chi2_Stat"))
+utils::globalVariables(c("Status", "Batch", "T2_Stat"))

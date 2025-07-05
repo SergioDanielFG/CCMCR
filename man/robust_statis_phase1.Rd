@@ -16,7 +16,7 @@ A list containing:
 \describe{
 \item{compromise_matrix}{Robust compromise matrix (without trace normalization)}
 \item{global_center}{Global robust center of the batches}
-\item{batch_statistics}{Data frame with Batch, Chi2_Stat (Hotelling-type statistic), and Weight}
+\item{batch_statistics}{Data frame with Batch, T2_Stat (Hotelling-type robust statistic), and Weight}
 \item{batch_medians}{List of medians per batch and variable}
 \item{batch_mads}{List of scaled MADs per batch and variable (constant 1.4826)}
 \item{global_medians}{Global medians per variable (for use in Phase 2)}

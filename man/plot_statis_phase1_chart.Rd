@@ -11,7 +11,7 @@ plot_statis_phase1_chart(
 )
 }
 \arguments{
-\item{batch_statistics}{A data frame with columns \code{Batch} and \code{Chi2_Stat},
+\item{batch_statistics}{A data frame with columns \code{Batch} and \code{T2_Stat},
 typically from \code{phase1_result$batch_statistics}.}
 
 \item{num_vars}{Integer. Number of variables used in the multivariate analysis (to compute the Chi² threshold).}
@@ -22,9 +22,9 @@ typically from \code{phase1_result$batch_statistics}.}
 A ggplot2 object.
 }
 \description{
-Plots the Chi-squared statistic per batch using the robust Hotelling T² statistic
-calculated in \code{robust_statis_phase1()}. The control limit is based on a Chi-squared
-distribution with degrees of freedom equal to the number of variables.
+Plots the Hotelling T² statistic per batch using the robust center and compromise
+matrix estimated in \code{robust_statis_phase1()}. The control limit is based on a
+Chi-squared distribution with degrees of freedom equal to the number of variables.
 }
 \examples{
 # Simulate new pharmaceutical manufacturing batches
