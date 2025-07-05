@@ -33,10 +33,11 @@ plot_statis_phase2_chart <- function(phase2_result,
                                      title = "Robust STATIS Dual Control Chart - Phase 2") {
   df2 <- phase2_result$t2_stats_by_batch
 
-  # Verificar o construir la columna Status
+  # Verificar o construir la columna Status usando el umbral
   if (!"Status" %in% colnames(df2)) {
-    df2$Status <- ifelse(grepl("13|14|15", df2$Batch), "Out of Control", "Under Control")
+    df2$Status <- ifelse(df2$T2_Stat > phase2_result$threshold, "Out of Control", "Under Control")
   }
+
 
   df2 <- df2[, c("Batch", "T2_Stat", "Status")]
   df2$Batch <- forcats::fct_inorder(df2$Batch)
