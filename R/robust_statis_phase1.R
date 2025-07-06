@@ -1,7 +1,7 @@
 #' Robust STATIS Dual - Phase 1 (Under Control Batches)
 #'
 #' Applies the Robust STATIS Dual methodology to Phase 1 data (under control batches),
-#' using robust batch-wise standardization (median and MAD scaled with constant 1.4826).
+#' using robust batch-wise standardization (median and MAD ).
 #' Covariance matrices are robustly estimated using the MCD method
 #' and used directly (without trace normalization) to construct the compromise matrix.
 #'
@@ -14,9 +14,9 @@
 #'   \item{global_center}{Global robust center of the batches}
 #'   \item{batch_statistics}{Data frame with Batch, T2_Stat (Hotelling-type robust statistic), and Weight}
 #'   \item{batch_medians}{List of medians per batch and variable}
-#'   \item{batch_mads}{List of scaled MADs per batch and variable (constant 1.4826)}
+#'   \item{batch_mads}{List of MADs per batch and variable (constant = 1)}
 #'   \item{global_medians}{Global medians per variable (for use in Phase 2)}
-#'   \item{global_mads}{Global scaled MADs per variable (constant 1.4826)}
+#'   \item{global_mads}{Global MADs per variable (constant = 1)}
 #'   \item{robust_means}{List of robust centers of each batch (estimated by MCD)}
 #'   \item{standardized_data}{Data set standardized batch by batch}
 #'   \item{robust_covariances}{List of robust covariance matrices per batch}
@@ -63,7 +63,7 @@ robust_statis_phase1 <- function(data, variables) {
     batch_data <- data[rows, variables]
 
     medians <- apply(batch_data, 2, median)
-    mads <- apply(batch_data, 2, mad)  # Default scaling: constant = 1.4826
+    mads <- apply(batch_data, 2, mad, constant= 1)
 
     batch_medians[[batch]] <- medians
     batch_mads[[batch]] <- mads
@@ -121,7 +121,7 @@ robust_statis_phase1 <- function(data, variables) {
   }
 
   global_medians <- apply(data[, variables], 2, median)
-  global_mads <- apply(data[, variables], 2, mad)
+  global_mads <- apply(data[, variables], 2, mad, constant= 1)
 
   return(list(
     compromise_matrix = compromise_matrix,
