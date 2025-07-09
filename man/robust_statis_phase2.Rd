@@ -20,7 +20,7 @@ robust_statis_phase2(
 
 \item{medians}{Named numeric vector containing the global medians obtained in Phase 1.}
 
-\item{mads}{Named numeric vector containing the scaled MADs (constant 1.4826) obtained in Phase 1.}
+\item{mads}{Named numeric vector containing the scaled MADs obtained in Phase 1.}
 
 \item{compromise_matrix}{Robust compromise matrix computed in Phase 1.}
 
@@ -29,7 +29,7 @@ robust_statis_phase2(
 \value{
 A list containing:
 \describe{
-\item{standardized_data}{Data frame with the new batches standardized using the global medians and scaled MADs (constant 1.4826).}
+\item{standardized_data}{Data frame with the new batches standardized using the global medians and scaled MADs.}
 \item{t2_stats_by_batch}{Data frame with the Hotelling-type \( T^2 \) statistics per batch.}
 \item{threshold}{Control limit based on the Chi-squared distribution (0.9973 quantile, degrees of freedom equal to the number of variables).}
 }

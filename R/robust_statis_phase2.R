@@ -7,13 +7,13 @@
 #' @param new_data A data frame containing the new batches to evaluate.
 #' @param variables Character vector with the names of the variables to be used.
 #' @param medians Named numeric vector containing the global medians obtained in Phase 1.
-#' @param mads Named numeric vector containing the scaled MADs (constant 1.4826) obtained in Phase 1.
+#' @param mads Named numeric vector containing the scaled MADs obtained in Phase 1.
 #' @param compromise_matrix Robust compromise matrix computed in Phase 1.
 #' @param global_center Robust global center obtained in Phase 1.
 #'
 #' @return A list containing:
 #' \describe{
-#'   \item{standardized_data}{Data frame with the new batches standardized using the global medians and scaled MADs (constant 1.4826).}
+#'   \item{standardized_data}{Data frame with the new batches standardized using the global medians and scaled MADs.}
 #'   \item{t2_stats_by_batch}{Data frame with the Hotelling-type \( T^2 \) statistics per batch.}
 #'   \item{threshold}{Control limit based on the Chi-squared distribution (0.9973 quantile, degrees of freedom equal to the number of variables).}
 #' }
