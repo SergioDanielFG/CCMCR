@@ -20,6 +20,14 @@ A ggplot2 object with the projected HJ-Biplot for Phase 2 batches.
 Projects new batches from Phase 2 into the HJ-Biplot space defined by the robust compromise matrix
 and eigen decomposition from Phase 1.
 }
+\details{
+This implementation follows the HJ-Biplot formulation of Galindo-Villardón (1986).
+The compromise matrix \eqn{C}, being symmetric and positive semidefinite, is
+decomposed via an eigen decomposition, not a generic Singular Value Decomposition (SVD).
+The square roots of the eigenvalues (\eqn{\sigma_i = \sqrt{\lambda_i}}) are used
+by convention to build the biplot scaling. This ensures consistency with the
+robust STATIS Dual methodology and avoids confusion with standard SVD of rectangular matrices.
+}
 \examples{
 datos <- simulate_pharma_batches()
 phase1_data <- subset(datos, Fase == "Fase 1" & Status == "Under Control")

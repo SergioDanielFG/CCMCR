@@ -7,10 +7,10 @@
 #'
 #' The simulated data includes four quality control variables: Concentration, Humidity, Dissolution, and Density.
 #'
-#' @param obs_por_lote Integer. Number of observations per batch. Default is 10.
+#' @param obs_por_lote Integer. Number of observations per batch. Default is 30.
 #' @param seed Optional integer. If provided, sets a random seed for reproducibility.
 #'
-#' @return A data frame with 150 observations and the following columns:
+#' @return A data frame with 450 observations and the following columns:
 #' \describe{
 #'   \item{Batch}{Factor. Batch identifier (Batch_1 to Batch_15).}
 #'   \item{Fase}{Factor. Phase of the process: "Fase 1" or "Fase 2".}
@@ -24,7 +24,7 @@
 #' @importFrom stats rnorm
 #' @importFrom Matrix nearPD
 
-simulate_pharma_batches <- function(obs_por_lote = 10, seed = NULL) {
+simulate_pharma_batches <- function(obs_por_lote = 30, seed = NULL) {
   if (!is.null(seed)) set.seed(seed)
 
   # Reference mean and covariance under control
@@ -76,8 +76,8 @@ simulate_pharma_batches <- function(obs_por_lote = 10, seed = NULL) {
   }))
 
   # Phase 2: 3 out-of-control batches with shifted mean and increased dispersion + contamination
-  mu_out_fase2 <- c(90, 4.0, 315, 1.8)
-  sigma_out_fase2 <- sigma_control * 0.5
+  mu_out_fase2 <- c(99, 2.8, 305, 0.8)
+  sigma_out_fase2 <- sigma_control * 1.2
   out_fase2 <- dplyr::bind_rows(lapply(13:15, function(batch) {
     base_out <- MASS::mvrnorm(obs_por_lote, mu_out_fase2, sigma_out_fase2)
     contaminated_out <- contaminate(base_out)

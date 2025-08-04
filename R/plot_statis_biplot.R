@@ -110,3 +110,4 @@ plot_statis_hj_biplot <- function(phase1_result,
 }
 
 utils::globalVariables(c("V1", "V2", "Variable", "Color", "Batch", "Size"))
+

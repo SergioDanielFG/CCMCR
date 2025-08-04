@@ -52,7 +52,7 @@ plot_statis_phase1_chart <- function(batch_statistics, num_vars,
     labs(
       title = title,
       x = "Batch",
-      y = expression(T^2 ~ "(Hotelling~statistic)")
+      y = expression(T^2 ~ "(Robust)")
     ) +
     theme_minimal(base_size = 13) +
     theme(
@@ -63,3 +63,4 @@ plot_statis_phase1_chart <- function(batch_statistics, num_vars,
 }
 
 utils::globalVariables(c("T2_Stat", "Batch"))
+

@@ -18,9 +18,9 @@ A list containing:
 \item{global_center}{Global robust center of the batches}
 \item{batch_statistics}{Data frame with Batch, T2_Stat (Hotelling-type robust statistic), and Weight}
 \item{batch_medians}{List of medians per batch and variable}
-\item{batch_mads}{List of MADs per batch and variable (constant = 1)}
+\item{batch_mads}{List of MADs per batch and variable }
 \item{global_medians}{Global medians per variable (for use in Phase 2)}
-\item{global_mads}{Global MADs per variable (constant = 1)}
+\item{global_mads}{Global MADs per variable }
 \item{robust_means}{List of robust centers of each batch (estimated by MCD)}
 \item{standardized_data}{Data set standardized batch by batch}
 \item{robust_covariances}{List of robust covariance matrices per batch}

@@ -71,7 +71,7 @@ robust_statis_phase2 <- function(new_data,
   for (batch in batches) {
     subset_batch <- standardized_data[standardized_data$Batch == batch, variables]
     n_b <- nrow(subset_batch)
-    x_b <- colMeans(subset_batch)
+    x_b <- rrcov::CovMcd(subset_batch, alpha = 0.75)@center
     diff <- x_b - global_center
     T2_b <- n_b * t(diff) %*% solve(compromise_matrix) %*% diff
     t2_stats_by_batch <- rbind(t2_stats_by_batch, data.frame(

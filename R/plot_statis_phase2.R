@@ -59,7 +59,7 @@ plot_statis_phase2_chart <- function(phase2_result,
     labs(
       title = title,
       x = "Batch",
-      y = expression(T^2 ~ "(Hotelling~per~Batch)"),
+      y = expression(T^2 ~ "(Robust)"),
       color = "Status"
     ) +
     theme_minimal(base_size = 13) +

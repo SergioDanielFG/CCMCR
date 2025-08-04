@@ -3,6 +3,14 @@
 #' Projects new batches from Phase 2 into the HJ-Biplot space defined by the robust compromise matrix
 #' and eigen decomposition from Phase 1.
 #'
+#' @details
+#' This implementation follows the HJ-Biplot formulation of Galindo-Villardón (1986).
+#' The compromise matrix \eqn{C}, being symmetric and positive semidefinite, is
+#' decomposed via an eigen decomposition, not a generic Singular Value Decomposition (SVD).
+#' The square roots of the eigenvalues (\eqn{\sigma_i = \sqrt{\lambda_i}}) are used
+#' by convention to build the biplot scaling. This ensures consistency with the
+#' robust STATIS Dual methodology and avoids confusion with standard SVD of rectangular matrices.
+#'
 #' @param phase1_result Result from `robust_statis_phase1()`.
 #' @param phase2_result Result from `robust_statis_phase2()` (must include standardized_data and chi_stats_by_batch).
 #' @param dims Dimensions to plot (default: c(1, 2)).

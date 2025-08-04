@@ -81,7 +81,7 @@ plot_classical_hotelling_t2_phase2_chart <- function(t2_statistics, num_vars,
     labs(
       title = title,
       x = "Batch",
-      y = expression(T^2 ~ "(per~Batch)"),
+      y = expression(T^2 ~ "(Classical)"),
       color = "Status"
     ) +
     theme_minimal(base_size = 13) +

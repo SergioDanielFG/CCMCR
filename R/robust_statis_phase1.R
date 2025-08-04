@@ -14,9 +14,9 @@
 #'   \item{global_center}{Global robust center of the batches}
 #'   \item{batch_statistics}{Data frame with Batch, T2_Stat (Hotelling-type robust statistic), and Weight}
 #'   \item{batch_medians}{List of medians per batch and variable}
-#'   \item{batch_mads}{List of MADs per batch and variable (constant = 1)}
+#'   \item{batch_mads}{List of MADs per batch and variable }
 #'   \item{global_medians}{Global medians per variable (for use in Phase 2)}
-#'   \item{global_mads}{Global MADs per variable (constant = 1)}
+#'   \item{global_mads}{Global MADs per variable }
 #'   \item{robust_means}{List of robust centers of each batch (estimated by MCD)}
 #'   \item{standardized_data}{Data set standardized batch by batch}
 #'   \item{robust_covariances}{List of robust covariance matrices per batch}
@@ -50,6 +50,7 @@
 #' result$statis_weights
 #' result$robust_means
 
+
 robust_statis_phase1 <- function(data, variables) {
   batches <- unique(data$Batch)
   p <- length(variables)
@@ -63,7 +64,7 @@ robust_statis_phase1 <- function(data, variables) {
     batch_data <- data[rows, variables]
 
     medians <- apply(batch_data, 2, median)
-    mads <- apply(batch_data, 2, mad, constant= 1)
+    mads <- apply(batch_data, 2, mad )
 
     batch_medians[[batch]] <- medians
     batch_mads[[batch]] <- mads
@@ -79,7 +80,7 @@ robust_statis_phase1 <- function(data, variables) {
   for (batch in batches) {
     subset_batch <- standardized_data[standardized_data$Batch == batch, variables]
     if (nrow(subset_batch) <= p) next
-    cov_est <- rrcov::CovMcd(subset_batch)
+    cov_est <- rrcov::CovMcd(subset_batch,alpha = 0.75)
     cov_matrices[[batch]] <- cov_est@cov
     robust_means[[batch]] <- cov_est@center
   }
@@ -121,7 +122,7 @@ robust_statis_phase1 <- function(data, variables) {
   }
 
   global_medians <- apply(data[, variables], 2, median)
-  global_mads <- apply(data[, variables], 2, mad, constant= 1)
+  global_mads <- apply(data[, variables], 2, mad)
 
   return(list(
     compromise_matrix = compromise_matrix,
@@ -136,7 +137,8 @@ robust_statis_phase1 <- function(data, variables) {
     similarity_matrix = S,
     robust_covariances = cov_matrices,
     statis_weights = weights,
-    first_eigenvector = first_eigenvector
+    first_eigenvector = first_eigenvector,
+    cov_est=cov_matrices
+
   ))
 }
-

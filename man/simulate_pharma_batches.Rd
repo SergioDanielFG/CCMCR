@@ -4,15 +4,15 @@
 \alias{simulate_pharma_batches}
 \title{Simulate Pharmaceutical Manufacturing Batches (Realistic Variability)}
 \usage{
-simulate_pharma_batches(obs_por_lote = 10, seed = NULL)
+simulate_pharma_batches(obs_por_lote = 30, seed = NULL)
 }
 \arguments{
-\item{obs_por_lote}{Integer. Number of observations per batch. Default is 10.}
+\item{obs_por_lote}{Integer. Number of observations per batch. Default is 30.}
 
 \item{seed}{Optional integer. If provided, sets a random seed for reproducibility.}
 }
 \value{
-A data frame with 150 observations and the following columns:
+A data frame with 450 observations and the following columns:
 \describe{
 \item{Batch}{Factor. Batch identifier (Batch_1 to Batch_15).}
 \item{Fase}{Factor. Phase of the process: "Fase 1" or "Fase 2".}
