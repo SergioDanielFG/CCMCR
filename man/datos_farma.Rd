@@ -17,7 +17,7 @@ A data frame with 450 rows and 7 variables:
 }
 }
 \source{
-Simulated using \code{\link{simulate_pharma_batches}} with \code{seed = 687} and \code{obs_por_lote = 30}.
+Simulated using \code{\link{simulate_pharma_batches}} with \code{seed = 780} and \code{obs_por_lote = 30}.
 }
 \usage{
 data("datos_farma")

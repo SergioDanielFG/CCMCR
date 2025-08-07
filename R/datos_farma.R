@@ -24,7 +24,7 @@
 #'   \item{Density}{Density (g/cm\eqn{^3})}
 #' }
 #'
-#' @source Simulated using \code{\link{simulate_pharma_batches}} with \code{seed = 687} and \code{obs_por_lote = 30}.
+#' @source Simulated using \code{\link{simulate_pharma_batches}} with \code{seed = 780} and \code{obs_por_lote = 30}.
 #' @usage data("datos_farma")
 #' @keywords datasets
 #' @name datos_farma
