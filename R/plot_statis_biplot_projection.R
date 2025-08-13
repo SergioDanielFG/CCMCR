@@ -42,16 +42,16 @@
 plot_statis_biplot_projection <- function(phase1_result, phase2_result, dims = c(1, 2)) {
   stopifnot(length(dims) == 2)
 
-  # 1. Matriz de compromiso y descomposición espectral
+  # --- 1. Eigen descomposición de la matriz de compromiso ---
   compromise <- phase1_result$compromise_matrix
   eig <- eigen(compromise)
   eig_vectors <- eig$vectors
-  eig_values <- eig$values
+  eig_values  <- eig$values
 
   D_k <- diag(sqrt(eig_values[dims]))
   V_k <- eig_vectors[, dims]
 
-  # 2. Calcular centros multivariados por lote usando las variables del compromiso
+  # --- 2. Calcular centros multivariados por lote (fase 2) ---
   selected_vars <- colnames(compromise)
   phase2_means <- aggregate(
     phase2_result$standardized_data[, selected_vars],
@@ -61,45 +61,37 @@ plot_statis_biplot_projection <- function(phase1_result, phase2_result, dims = c
   rownames(phase2_means) <- phase2_means$Batch
   G2 <- as.matrix(phase2_means[, selected_vars]) %*% V_k %*% D_k
 
-  # 3. Variables como vectores desde el origen
-  H <- V_k %*% D_k
-  rownames(H) <- selected_vars
+  df_batches <- data.frame(G2, Batch = rownames(phase2_means))
+  colnames(df_batches)[1:2] <- c("V1", "V2")
 
-  df_vars <- as.data.frame(H)
-  df_vars$Variable <- rownames(df_vars)
-
-  df_batches <- as.data.frame(G2)
-  colnames(df_batches) <- c("V1", "V2")
-  df_batches$Batch <- forcats::fct_inorder(rownames(df_batches))
-
-  # 4. Clasificación según estadístico T² robusto
+  # --- 3. Clasificación según estadístico T² robusto ---
   stats_phase2 <- phase2_result$t2_stats_by_batch
   ucl <- phase2_result$threshold
+  df_batches$Status <- ifelse(stats_phase2$T2_Stat > ucl,
+                              "Out of Control", "Under Control")
 
-   status_vec <- setNames(
-    ifelse(stats_phase2$T2_Stat > ucl, "Out of Control", "Under Control"),
-    stats_phase2$Batch
-  )
-  df_batches$Status <- status_vec[as.character(df_batches$Batch)]
+  # --- 4. Variables como vectores desde el origen ---
+  H <- V_k %*% D_k
+  df_vars <- data.frame(H, Variable = selected_vars)
+  colnames(df_vars)[1:2] <- c("V1", "V2")
 
-
-  df_batches$Color <- ifelse(df_batches$Status == "Out of Control", "brown", "#0072B2")
-  df_batches$Size <- ifelse(df_batches$Status == "Out of Control", 4, 3)
-
+  # --- 5. Varianza explicada ---
   var_explained <- round(100 * eig_values[dims] / sum(eig_values), 1)
 
-  # 5. Márgenes automáticos
-  x_range <- range(df_batches$V1, na.rm = TRUE)
-  y_range <- range(df_batches$V2, na.rm = TRUE)
+  # --- 6. Márgenes automáticos ---
+  x_range <- range(c(df_batches$V1, df_vars$V1 * 1.4), na.rm = TRUE)
+  y_range <- range(c(df_batches$V2, df_vars$V2 * 1.4), na.rm = TRUE)
   x_margin <- diff(x_range) * 0.15
   y_margin <- diff(y_range) * 0.15
   x_limits <- c(x_range[1] - x_margin, x_range[2] + x_margin)
   y_limits <- c(y_range[1] - y_margin, y_range[2] + y_margin)
 
-  # 6. Construcción del gráfico
+  # --- 7. Construcción del gráfico ---
   g <- ggplot() +
     geom_hline(yintercept = 0, color = "grey40") +
     geom_vline(xintercept = 0, color = "grey40") +
+
+    # Flechas de variables
     geom_segment(data = df_vars,
                  aes(x = 0, y = 0, xend = V1 * 1.4, yend = V2 * 1.4),
                  arrow = arrow(length = unit(0.25, "cm")),
@@ -110,26 +102,36 @@ plot_statis_biplot_projection <- function(phase1_result, phase2_result, dims = c
       color = "brown", size = 5, fontface = "bold",
       segment.color = NA, max.overlaps = Inf
     ) +
+
+    # Puntos de lotes
     geom_point(data = df_batches,
-               aes(x = V1, y = V2, color = Color, size = Size)) +
+               aes(x = V1, y = V2, color = Status, size = Status)) +
     ggrepel::geom_text_repel(data = df_batches,
                              aes(x = V1, y = V2, label = Batch),
-                             size = 4, color = "black", fontface = "plain") +
-    scale_color_identity() +
-    scale_size_identity() +
+                             size = 4, color = "black") +
+
+    scale_color_manual(values = c("Under Control" = "#0072B2",
+                                  "Out of Control" = "brown")) +
+    scale_size_manual(values = c("Under Control" = 3,
+                                 "Out of Control" = 4)) +
+
     labs(
       title = "HJ-Biplot Projection - Phase 2 Batches",
       x = paste0("Dim ", dims[1], " (", var_explained[1], "%)"),
-      y = paste0("Dim ", dims[2], " (", var_explained[2], "%)")
+      y = paste0("Dim ", dims[2], " (", var_explained[2], "%)"),
+      color = "Batch Status",
+      size  = "Batch Status"
     ) +
     coord_cartesian(xlim = x_limits, ylim = y_limits) +
     theme_minimal(base_size = 14) +
     theme(
       plot.title = element_text(face = "bold", size = 16, hjust = 0.5),
-      legend.position = "none"
+      legend.position = "bottom",
+      legend.title = element_text(size = 12),
+      legend.text  = element_text(size = 11)
     )
 
   return(g)
-  }
+}
 
-utils::globalVariables(c("V1", "V2", "Variable", "Color", "Batch", "Size", "Status"))
+utils::globalVariables(c("V1", "V2", "Variable", "Batch", "Status"))

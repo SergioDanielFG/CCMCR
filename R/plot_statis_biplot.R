@@ -74,37 +74,49 @@ plot_statis_hj_biplot <- function(phase1_result,
 
    df_batches$Size <- ifelse(df_batches$Batch %in% highlight_batches, 4, 2.5)
 
+   # Calcular márgenes dinámicos
+   x_range <- range(c(df_batches$V1, df_vars$V1 * 1.3))
+   y_range <- range(c(df_batches$V2, df_vars$V2 * 1.3))
+
+   x_margin <- diff(x_range) * 0.25  # margen horizontal aumentado
+   y_margin <- diff(y_range) * 0.15  # margen vertical
+
    g <- ggplot() +
-    geom_hline(yintercept = 0, color = "grey30") +
-    geom_vline(xintercept = 0, color = "grey30") +
-    geom_segment(data = df_vars,
-                 aes(x = 0, y = 0, xend = V1 * 1.2, yend = V2 * 1.2),
-                 arrow = arrow(length = unit(0.25, "cm")), color = "brown", linewidth = 1) +
-    geom_text(data = df_vars,
-              aes(x = V1 * 1.3, y = V2 * 1.3, label = Variable),
-              color = "brown", size = 4.5, fontface = "bold") +
-    geom_point(data = df_batches,
-               aes(x = V1, y = V2, color = Color, size = Size)) +
-    ggrepel::geom_text_repel(data = df_batches,
-                             aes(x = V1, y = V2, label = Batch),
-                             size = 3, color = "black") +
-    { if (color_by != "none") scale_color_viridis_c(
-      name = ifelse(color_by == "weight", "STATIS Weight", "Chi^2 Distance"),
-      option = "C", end = 0.9
-    ) else scale_color_identity() } +
-    scale_size_identity() +
-    labs(
-      title = "HJ-Biplot - Robust STATIS Dual Compromise",
-      x = paste0("Dim ", dims[1], " (", var_explained[1], "%)"),
-      y = paste0("Dim ", dims[2], " (", var_explained[2], "%)")
-    ) +
-    coord_cartesian(expand = TRUE) +
-    theme_minimal(base_size = 13) +
-    theme(
-      plot.title = element_text(face = "bold", size = 15, hjust = 0.5),
-      legend.position = if (color_by == "none") "none" else "right",
-      aspect.ratio = 0.5
-    )
+     geom_hline(yintercept = 0, color = "grey30") +
+     geom_vline(xintercept = 0, color = "grey30") +
+     geom_segment(data = df_vars,
+                  aes(x = 0, y = 0, xend = V1 * 1.2, yend = V2 * 1.2),
+                  arrow = arrow(length = unit(0.25, "cm")), color = "brown", linewidth = 1) +
+     geom_text(data = df_vars,
+               aes(x = V1 * 1.3, y = V2 * 1.3, label = Variable),
+               color = "brown", size = 4.5, fontface = "bold")+
+
+     geom_point(data = df_batches,
+                aes(x = V1, y = V2, color = Color, size = Size)) +
+     ggrepel::geom_text_repel(data = df_batches,
+                              aes(x = V1, y = V2, label = Batch),
+                              size = 3, color = "black") +
+     { if (color_by != "none") scale_color_viridis_c(
+       name = ifelse(color_by == "weight", "STATIS Weight", "Chi^2 Distance"),
+       option = "C", end = 0.9
+     ) else scale_color_identity() } +
+     scale_size_identity() +
+     labs(
+       title = "HJ-Biplot - Robust STATIS Dual Compromise",
+       x = paste0("Dim ", dims[1], " (", var_explained[1], "%)"),
+       y = paste0("Dim ", dims[2], " (", var_explained[2], "%)")
+     ) +
+     coord_cartesian(
+       xlim = c(x_range[1] - x_margin, x_range[2] + x_margin),
+       ylim = c(y_range[1] - y_margin, y_range[2] + y_margin)
+     ) +
+     theme_minimal(base_size = 13) +
+     theme(
+       plot.title = element_text(face = "bold", size = 15, hjust = 0.5),
+       legend.position = if (color_by == "none") "none" else "right",
+       aspect.ratio = 0.5
+     )
+
 
   return(g)
 }
