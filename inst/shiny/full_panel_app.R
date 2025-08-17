@@ -1,7 +1,7 @@
 library(shiny)
 library(ggplot2)
 library(shinythemes)
-library(CCMCR)
+library(robustT2)
 
 ui <- fluidPage(
   theme = shinytheme("cosmo"),

@@ -13,7 +13,7 @@
 #' }
 
 run_statis_dashboard <- function() {
-  app_dir <- system.file("shiny", "full_panel_app.R", package = "CCMCR")
+  app_dir <- system.file("shiny", "full_panel_app.R", package = "robustT2")
   if (app_dir == "") {
     stop("Shiny app script not found. Did you forget to install the package with inst/shiny?")
   }
