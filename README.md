@@ -1,77 +1,41 @@
-# CCMCR: Chi-Square Control Chart with Multivariate and Robust Estimators
+# robustT2: Robust Hotelling-Type T2 Control Chart Based on STATIS Dual
 
-⚠️ **Versión preliminar**: Este paquete incluye herramientas de simulación para procesos de control de calidad en la industria farmacéutica. Las funciones para gráficos de control multivariantes robustos están en desarrollo y serán añadidas en versiones futuras.
+## Overview
+
+`robustT2` is an R package designed for robust multivariate statistical process control.  
+It implements methods based on the **STATIS Dual** approach to monitor batch-based industrial processes involving multiple correlated quality variables.
+
+The package provides:
+- Construction of a robust compromise covariance matrix using **Minimum Covariance Determinant (MCD)** estimators.  
+- Robust Hotelling-type T² statistics for anomaly detection.  
+- Phase II monitoring using standardized Mahalanobis distances projected onto the compromise structure.  
+- Visualization tools through robust biplots (GH-Biplot and HJ-Biplot) and an interactive **Shiny dashboard**.  
+
+An internal dataset (`datos_farma`) is included for reproducibility and demonstration.
 
 ---
 
-## Descripción general
+## Installation
 
-`CCMCR` es un paquete en R diseñado para apoyar investigaciones en control estadístico de procesos multivariados. Proporciona herramientas para simular lotes de producción con múltiples variables de calidad, tanto en condiciones bajo control como fuera de control, con posibles contaminaciones o alteraciones.
+You can install the development version directly from GitHub:
 
-El paquete servirá como base para comparar gráficos de control clásicos (Hotelling T²) y gráficos robustos basados en estimadores como **MCD** y técnicas de tres vías como **STATIS Dual**.
+``r
 
----
-
-## Instalación
-
-Puedes instalar la versión de desarrollo directamente desde GitHub:
-
-```r
 # install.packages("devtools")
-devtools::install_github("SergioDanielFG/CCMCR")
-```
+devtools::install_github("SergioDanielFG/robustT2")
 
----
+## Authors
 
-## Funciones incluidas
+Sergio Daniel Frutos Galarza
+PhD Candidate in Multivariate Statistics
+University of Salamanca (USAL)
 
-- `simulate_pharma_batches()`: Simula lotes farmacéuticos con 4 variables cuantitativas:
-  - `Concentration`
-  - `Humidity`
-  - `Dissolution`
-  - `Density`
+Contributors
 
-- Dataset `datos_farma`: Contiene un conjunto de datos simulados con 10 lotes bajo control (Fase 1) y 5 lotes (Fase 2) que incluyen tanto lotes bajo control como fuera de control.
+Omar Ruiz Barzola
 
----
+Dr. Purificación Galindo Villardón
 
-## Ejemplo básico
-
-```r
-library(CCMCR)
-
-# Simular datos
-datos <- simulate_pharma_batches()
-
-# Ver primeras filas
-head(datos)
-```
-
----
-
-## Desarrollo futuro
-
-El paquete incorporará:
-
-- Estimadores robustos: **MCD**, **MVE**
-- Gráficos de control multivariantes robustos tipo Hotelling T²
-- Visualizaciones interactivas (Shiny Dashboard)
-- Métodos basados en STATIS Dual para construir matrices de compromiso robustas
-
----
-
-## Autor
-
-**Sergio Daniel Frutos Galarza**  
-Doctorando en Estadística Multivariante  
-Universidad de Salamanca (USAL)
-
-**Colaboradores**  
-- Omar Ruiz Barzola  
-- Dra. Purificación Galindo Villardón
-
----
-
-## Licencia
+## License  
 
 MIT © 2025 Sergio Daniel Frutos Galarza
