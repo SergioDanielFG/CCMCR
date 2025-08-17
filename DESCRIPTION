@@ -1,12 +1,22 @@
-Package: CCMCR
-Title: Title: Robust Multivariate Control Chart Based on STATIS Dual (CCMCR)
+Package: robustT2
+Title: Robust Hotelling-Type T2 Control Chart Based on STATIS Dual
 Version: 0.1.0
 Authors@R: c(
     person("Sergio Daniel", "Frutos Galarza", , "sergio_dan88@hotmail.com", role = c("aut", "cre")),
     person("Omar", "Ruiz Barzola", , "oruiz@espol.edu.ec", role = "aut"),
     person("Purificación", "Galindo Villardón", , "pgalindo@usal.es", role = "aut")
   )
-Description:Description: CCMCR implements a robust multivariate control chart methodology based on the STATIS Dual approach, designed to monitor batch-based industrial processes involving multiple correlated quantitative variables. The method constructs a robust compromise covariance matrix using Minimum Covariance Determinant (MCD) estimators from Phase 1 batches, and calculates a robust Hotelling-type T² statistic for anomaly detection. Phase 2 batches are evaluated using standardized Mahalanobis distances projected onto the compromise structure. The package includes tools for simulating contaminated and clean batches, applying robust and classical Hotelling T² control charts, and visualizing results via robust biplots (GH-biplot and projection) and an interactive Shiny dashboard. Also includes an internal dataset (datos_farma) for reproducibility and demonstration.
+Description:Implements a robust multivariate control chart methodology based on
+    the STATIS Dual approach to monitor batch-based industrial processes with
+    multiple correlated variables. A robust compromise covariance matrix is
+    constructed using Minimum Covariance Determinant (MCD) estimators from Phase I
+    batches, and a robust Hotelling-type T2 statistic is used for anomaly detection.
+    Phase II batches are evaluated via standardized Mahalanobis distances projected
+    onto the compromise structure. The package includes functions for simulating
+    contaminated and clean batches, applying robust and classical Hotelling T2 control
+    charts, and visualizing results through robust biplots (GH-biplot and projection)
+    and an interactive Shiny dashboard. An internal dataset ('datos_farma') is provided
+    for reproducibility.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -23,5 +33,5 @@ Imports:
     Matrix
 Depends: 
     R (>= 3.5)
-URL: https://github.com/SergioDanielFG/CCMCR
-BugReports: https://github.com/SergioDanielFG/CCMCR/issues
+URL: https://github.com/SergioDanielFG/robustT2
+BugReports: https://github.com/SergioDanielFG/robustT2/issues
