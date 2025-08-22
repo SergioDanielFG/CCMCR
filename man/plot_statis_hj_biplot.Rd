@@ -12,7 +12,7 @@ plot_statis_hj_biplot(
 )
 }
 \arguments{
-\item{phase1_result}{Result from \code{robust_statis_phase1()}.}
+\item{phase1_result}{Result from robust_statis_phase1().}
 
 \item{dims}{Dimensions to plot (default: c(1, 2)).}
 

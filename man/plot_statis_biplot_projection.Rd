@@ -2,14 +2,15 @@
 % Please edit documentation in R/plot_statis_biplot_projection.R
 \name{plot_statis_biplot_projection}
 \alias{plot_statis_biplot_projection}
-\title{HJ-Biplot Projection - Robust STATIS Dual (Fase 2)}
+\title{HJ-Biplot Projection - Robust STATIS Dual (phase 2)}
 \usage{
 plot_statis_biplot_projection(phase1_result, phase2_result, dims = c(1, 2))
 }
 \arguments{
 \item{phase1_result}{Result from \code{robust_statis_phase1()}.}
 
-\item{phase2_result}{Result from \code{robust_statis_phase2()} (must include standardized_data and chi_stats_by_batch).}
+\item{phase2_result}{Result from \code{robust_statis_phase2()} (must include \code{standardized_data},
+\code{t2_stats_by_batch} and \code{threshold}).}
 
 \item{dims}{Dimensions to plot (default: c(1, 2)).}
 }
@@ -23,10 +24,8 @@ and eigen decomposition from Phase 1.
 \details{
 This implementation follows the HJ-Biplot formulation of Galindo-Villardón (1986).
 The compromise matrix \eqn{C}, being symmetric and positive semidefinite, is
-decomposed via an eigen decomposition, not a generic Singular Value Decomposition (SVD).
-The square roots of the eigenvalues (\eqn{\sigma_i = \sqrt{\lambda_i}}) are used
-by convention to build the biplot scaling. This ensures consistency with the
-robust STATIS Dual methodology and avoids confusion with standard SVD of rectangular matrices.
+decomposed via an eigen decomposition (not a rectangular SVD). The square roots
+of eigenvalues are used to build the biplot scaling, consistent with robust STATIS Dual.
 }
 \examples{
 datos <- simulate_pharma_batches()
