@@ -17,10 +17,10 @@ ui <- fluidPage(
       tabsetPanel(
         tabPanel("Robust Phase 1", plotOutput("phase1_plot", height = "500px")),
         tabPanel("Robust Phase 2", plotOutput("phase2_plot", height = "500px")),
-        tabPanel("HJ-Biplot (Fase 1)", plotOutput("biplot", height = "500px")),
-        tabPanel("Projection Biplot (Fase 2)", plotOutput("projection_biplot", height = "500px")),
-        tabPanel("Hotelling T² Clásico - Fase 1", plotOutput("classic_phase1", height = "500px")),
-        tabPanel("Hotelling T² Clásico - Fase 2", plotOutput("classic_phase2", height = "500px"))
+        tabPanel("HJ-Biplot (Phase 1)", plotOutput("biplot", height = "500px")),
+        tabPanel("Projection Biplot (Phase 2)", plotOutput("projection_biplot", height = "500px")),
+        tabPanel("Hotelling T² Classic - Phase 1", plotOutput("classic_phase1", height = "500px")),
+        tabPanel("Hotelling T² Classic - Phase 2", plotOutput("classic_phase2", height = "500px"))
       )
     )
   )
@@ -29,17 +29,17 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   vars <- c("Concentration", "Humidity", "Dissolution", "Density")
 
-  # Datos simulados
-  datos_simulados <- simulate_pharma_batches()
+  # Simulated data
+  sim_batches <- simulate_pharma_batches()
 
-  # Fase 1 robusta
-  phase1_data <- subset(datos_simulados, Fase == "Fase 1" & Status == "Under Control")
+  # Robust Phase 1
+  phase1_data <- subset(sim_batches, Phase == "Phase 1" & Status == "Under Control")
   phase1 <- reactive({
     robust_statis_phase1(data = phase1_data, variables = vars)
   })
 
-  # Fase 2 robusta
-  phase2_data <- subset(datos_simulados, Fase == "Fase 2")
+  # Robust Phase 2
+  phase2_data <- subset(sim_batches, Phase == "Phase 2")
   phase2 <- reactive({
     robust_statis_phase2(
       new_data = phase2_data,
@@ -51,13 +51,13 @@ server <- function(input, output, session) {
     )
   })
 
-  # Hotelling clásico - Fase 1
+  # Classical Hotelling - Phase 1
   classical_f1 <- hotelling_t2_phase1(
-    data = subset(datos_simulados, Fase == "Fase 1"),
+    data = subset(sim_batches, Phase == "Phase 1"),
     variables = vars
   )
 
-  # Hotelling clásico - Fase 2
+  # Classical Hotelling - Phase 2
   classical_f2 <- hotelling_t2_phase2(
     new_data = phase2_data,
     variables = vars,
@@ -65,26 +65,26 @@ server <- function(input, output, session) {
     covariance = classical_f1$covariance
   )
 
-  # Estado de Fase 2
+  # Phase 2 status (to color classical Phase 2 chart)
   status_f2 <- unique(phase2_data[, c("Batch", "Status")])
   classical_f2$batch_statistics <- merge(classical_f2$batch_statistics, status_f2, by = "Batch")
 
-  # Gráfico robusto Fase 1
+  # Robust Phase 1 chart
   output$phase1_plot <- renderPlot({
     plot_statis_phase1_chart(batch_statistics = phase1()$batch_statistics, num_vars = length(vars))
   })
 
-  # Gráfico robusto Fase 2
+  # Robust Phase 2 chart
   output$phase2_plot <- renderPlot({
     plot_statis_phase2_chart(phase2_result = phase2())
   })
 
-  # HJ-Biplot Fase 1
+  # HJ-Biplot Phase 1
   output$biplot <- renderPlot({
     plot_statis_hj_biplot(phase1_result = phase1(), color_by = input$color_by)
   })
 
-  # Biplot de proyección Fase 2
+  # Projection Biplot Phase 2
   output$projection_biplot <- renderPlot({
     plot_statis_biplot_projection(
       phase1_result = phase1(),
@@ -92,12 +92,12 @@ server <- function(input, output, session) {
     )
   })
 
-  # Gráfico clásico T² - Fase 1
+  # Classical T² - Phase 1
   output$classic_phase1 <- renderPlot({
     plot_classical_hotelling_t2_chart(t2_statistics = classical_f1$batch_statistics, num_vars = length(vars))
   })
 
-  # Gráfico clásico T² - Fase 2
+  # Classical T² - Phase 2
   output$classic_phase2 <- renderPlot({
     plot_classical_hotelling_t2_phase2_chart(t2_statistics = classical_f2$batch_statistics, num_vars = length(vars))
   })

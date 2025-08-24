@@ -12,20 +12,19 @@
 #' @return ggplot2 object with HJ-Biplot.
 #' @export
 #' @importFrom stats setNames
-
+#'
 #' @import ggplot2
 #' @importFrom grid unit
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom forcats fct_inorder
 #'
 #' @examples
-#' datos <- simulate_pharma_batches()
+#' sim_batches <- simulate_pharma_batches()
 #' phase1 <- robust_statis_phase1(
-#'   data = subset(datos, Fase == "Fase 1" & Status == "Under Control"),
+#'   data = subset(sim_batches, Phase == "Phase 1" & Status == "Under Control"),
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 #' )
 #' plot_statis_hj_biplot(phase1)
-
 plot_statis_hj_biplot <- function(phase1_result,
                                   dims = c(1, 2),
                                   color_by = c("none", "weight", "distance"),
@@ -120,7 +119,7 @@ plot_statis_hj_biplot <- function(phase1_result,
       x = paste0("Dim ", dims[1], " (", var_explained[1], "%)"),
       y = paste0("Dim ", dims[2], " (", var_explained[2], "%)")
     ) +
-    coord_fixed(   # usa SOLO uno: coord_fixed O coord_cartesian
+    coord_fixed(
       xlim = c(x_range[1] - x_margin, x_range[2] + x_margin),
       ylim = c(y_range[1] - y_margin, y_range[2] + y_margin),
       ratio = 1
@@ -129,7 +128,6 @@ plot_statis_hj_biplot <- function(phase1_result,
     theme(
       plot.title = element_text(face = "bold", size = 15, hjust = 0.5),
       legend.position = if (color_by == "none") "none" else "right"
-
     )
 
   return(g)

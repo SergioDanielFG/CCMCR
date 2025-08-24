@@ -37,10 +37,10 @@ and used directly (without trace normalization) to construct the compromise matr
 }
 \examples{
 # Simulate new pharmaceutical manufacturing batches
-datos <- simulate_pharma_batches()
+sim_batches <- simulate_pharma_batches()
 
 # Select only Phase 1 under control batches
-phase1_data <- subset(datos, Fase == "Fase 1" & Status == "Under Control")
+phase1_data <- subset(sim_batches, Phase == "Phase 1" & Status == "Under Control")
 
 # Apply robust STATIS Dual methodology
 result <- robust_statis_phase1(

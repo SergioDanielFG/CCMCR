@@ -27,10 +27,10 @@ the chi-squared distribution with degrees of freedom equal to the number of vari
 }
 \examples{
 # Simulate pharmaceutical manufacturing batches
-datos <- simulate_pharma_batches()
+sim_batches <- simulate_pharma_batches()
 
 # Phase 1 analysis: use Phase 1 data
-phase1_data <- subset(datos, Fase == "Fase 1")
+phase1_data <- subset(sim_batches, Phase == "Phase 1")
 
 # Apply classical Hotelling T2 methodology
 t2_result <- hotelling_t2_phase1(

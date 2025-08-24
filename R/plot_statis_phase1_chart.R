@@ -17,12 +17,12 @@
 #' @importFrom forcats fct_inorder
 #'
 #' @examples
-#' # Simulate new pharmaceutical manufacturing batches
-#' datos <- simulate_pharma_batches()
+
+#' sim_batches <- simulate_pharma_batches()
 #'
 #' # Phase 1 analysis: select under control batches from Phase 1
 #' phase1_result <- robust_statis_phase1(
-#'   data = subset(datos, Fase == "Fase 1" & Status == "Under Control"),
+#'   data = subset(sim_batches, Phase == "Phase 1" & Status == "Under Control"),
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 #' )
 #'
@@ -63,4 +63,3 @@ plot_statis_phase1_chart <- function(batch_statistics, num_vars,
 }
 
 utils::globalVariables(c("T2_Stat", "Batch"))
-

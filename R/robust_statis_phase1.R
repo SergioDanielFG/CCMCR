@@ -31,10 +31,10 @@
 #'
 #' @examples
 #' # Simulate new pharmaceutical manufacturing batches
-#' datos <- simulate_pharma_batches()
+#' sim_batches <- simulate_pharma_batches()
 #'
 #' # Select only Phase 1 under control batches
-#' phase1_data <- subset(datos, Fase == "Fase 1" & Status == "Under Control")
+#' phase1_data <- subset(sim_batches, Phase == "Phase 1" & Status == "Under Control")
 #'
 #' # Apply robust STATIS Dual methodology
 #' result <- robust_statis_phase1(
@@ -49,8 +49,6 @@
 #' result$similarity_matrix
 #' result$statis_weights
 #' result$robust_means
-
-
 robust_statis_phase1 <- function(data, variables) {
   batches <- unique(data$Batch)
   p <- length(variables)
@@ -138,7 +136,6 @@ robust_statis_phase1 <- function(data, variables) {
     robust_covariances = cov_matrices,
     statis_weights = weights,
     first_eigenvector = first_eigenvector,
-    cov_est=cov_matrices
-
+    cov_est = cov_matrices
   ))
 }

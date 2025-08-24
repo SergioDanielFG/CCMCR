@@ -27,12 +27,11 @@ matrix estimated in \code{robust_statis_phase1()}. The control limit is based on
 Chi-squared distribution with degrees of freedom equal to the number of variables.
 }
 \examples{
-# Simulate new pharmaceutical manufacturing batches
-datos <- simulate_pharma_batches()
+sim_batches <- simulate_pharma_batches()
 
 # Phase 1 analysis: select under control batches from Phase 1
 phase1_result <- robust_statis_phase1(
-  data = subset(datos, Fase == "Fase 1" & Status == "Under Control"),
+  data = subset(sim_batches, Phase == "Phase 1" & Status == "Under Control"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 )
 

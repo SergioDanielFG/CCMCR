@@ -1,4 +1,4 @@
-#' HJ-Biplot Projection - Robust STATIS Dual (phase 2)
+#' HJ-Biplot Projection - Robust STATIS Dual (Phase 2)
 #'
 #' Projects new batches from Phase 2 into the HJ-Biplot space defined by the robust compromise matrix
 #' and eigen decomposition from Phase 1.
@@ -22,9 +22,9 @@
 #' @importFrom ggrepel geom_label_repel
 #'
 #' @examples
-#' datos <- simulate_pharma_batches()
-#' phase1_data <- subset(datos, Fase == "Fase 1" & Status == "Under Control")
-#' phase2_data <- subset(datos, Fase == "Fase 2")
+#' sim_batches <- simulate_pharma_batches()
+#' phase1_data <- subset(sim_batches, Phase == "Phase 1" & Status == "Under Control")
+#' phase2_data <- subset(sim_batches, Phase == "Phase 2")
 #'
 #' phase1 <- robust_statis_phase1(
 #'   data = phase1_data,
@@ -41,10 +41,8 @@
 #' )
 #'
 #' plot_statis_biplot_projection(phase1, phase2)
-
 plot_statis_biplot_projection <- function(phase1_result, phase2_result, dims = c(1, 2)) {
   stopifnot(length(dims) == 2)
-
 
   compromise <- phase1_result$compromise_matrix
   eig <- eigen(compromise)
@@ -53,7 +51,6 @@ plot_statis_biplot_projection <- function(phase1_result, phase2_result, dims = c
 
   D_k <- diag(sqrt(eig_values[dims]))
   V_k <- eig_vectors[, dims]
-
 
   selected_vars <- colnames(compromise)
   phase2_means <- aggregate(
@@ -67,20 +64,16 @@ plot_statis_biplot_projection <- function(phase1_result, phase2_result, dims = c
   df_batches <- data.frame(G2, Batch = rownames(phase2_means))
   colnames(df_batches)[1:2] <- c("V1", "V2")
 
-
   stats_phase2 <- phase2_result$t2_stats_by_batch
   ucl <- phase2_result$threshold
   df_batches$Status <- ifelse(stats_phase2$T2_Stat > ucl,
                               "Out of Control", "Under Control")
 
-
   H <- V_k %*% D_k
   df_vars <- data.frame(H, Variable = selected_vars)
   colnames(df_vars)[1:2] <- c("V1", "V2")
 
-
   var_explained <- round(100 * eig_values[dims] / sum(eig_values), 1)
-
 
   x_range <- range(c(df_batches$V1, df_vars$V1 * 1.4), na.rm = TRUE)
   y_range <- range(c(df_batches$V2, df_vars$V2 * 1.4), na.rm = TRUE)
@@ -92,7 +85,6 @@ plot_statis_biplot_projection <- function(phase1_result, phase2_result, dims = c
   g <- ggplot() +
     geom_hline(yintercept = 0, color = "grey40") +
     geom_vline(xintercept = 0, color = "grey40") +
-
     geom_segment(data = df_vars,
                  aes(x = 0, y = 0, xend = V1 * 1.4, yend = V2 * 1.4),
                  arrow = arrow(length = unit(0.25, "cm")),
@@ -103,13 +95,10 @@ plot_statis_biplot_projection <- function(phase1_result, phase2_result, dims = c
       color = "brown", size = 4.5, fontface = "bold",
       segment.color = NA, max.overlaps = Inf
     ) +
-
-
     geom_point(
       data = df_batches,
       aes(x = V1, y = V2, color = Status, size = Status)
     ) +
-
     ggrepel::geom_label_repel(
       data = subset(df_batches, Batch != "Batch_14"),
       aes(x = V1, y = V2, label = Batch),
@@ -121,7 +110,7 @@ plot_statis_biplot_projection <- function(phase1_result, phase2_result, dims = c
       max.overlaps = Inf, min.segment.length = 0,
       segment.color = "grey60", segment.size = 0.2
     ) +
-    # Solo Batch_14, bajado y sin línea
+
     ggrepel::geom_label_repel(
       data = subset(df_batches, Batch == "Batch_14"),
       aes(x = V1, y = V2, label = Batch),
@@ -134,13 +123,10 @@ plot_statis_biplot_projection <- function(phase1_result, phase2_result, dims = c
       segment.color = "grey60", segment.size = 0.2,
       max.overlaps = Inf
     ) +
-
-
     scale_color_manual(values = c("Under Control" = "#0072B2",
                                   "Out of Control" = "brown")) +
     scale_size_manual(values = c("Under Control" = 3,
                                  "Out of Control" = 4)) +
-
     labs(
       title = "HJ-Biplot Projection - Phase 2 Batches",
       x = paste0("Dim ", dims[1], " (", var_explained[1], "%)"),

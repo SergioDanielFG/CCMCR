@@ -82,9 +82,9 @@ hotelling_t2_phase2 <- function(new_data, variables, center, covariance) {
 }
 
 #' @examples
-#' datos <- simulate_pharma_batches()
-#' phase1_data <- subset(datos, Fase == "Fase 1")
-#' phase2_data <- subset(datos, Fase == "Fase 2")
+#' sim_batches <- simulate_pharma_batches()
+#' phase1_data <- subset(sim_batches, Phase == "Phase 1")
+#' phase2_data <- subset(sim_batches, Phase == "Phase 2")
 #'
 #' # Phase 1 classical Hotelling T2
 #' t2_phase1 <- hotelling_t2_phase1(

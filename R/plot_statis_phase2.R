@@ -14,13 +14,13 @@
 #' @importFrom forcats fct_inorder
 #'
 #' @examples
-#' datos <- simulate_pharma_batches()
+#' sim_batches <- simulate_pharma_batches()
 #' phase1 <- robust_statis_phase1(
-#'   data = subset(datos, Fase == "Fase 1" & Status == "Under Control"),
+#'   data = subset(sim_batches, Phase == "Phase 1" & Status == "Under Control"),
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 #' )
 #' phase2 <- robust_statis_phase2(
-#'   new_data = subset(datos, Fase == "Fase 2"),
+#'   new_data = subset(sim_batches, Phase == "Phase 2"),
 #'   variables = c("Concentration", "Humidity", "Dissolution", "Density"),
 #'   medians = phase1$global_medians,
 #'   mads = phase1$global_mads,
@@ -28,7 +28,6 @@
 #'   global_center = phase1$global_center
 #' )
 #' plot_statis_phase2_chart(phase2_result = phase2)
-
 plot_statis_phase2_chart <- function(phase2_result,
                                      title = "Robust STATIS Dual Control Chart - Phase 2") {
   df2 <- phase2_result$t2_stats_by_batch
@@ -37,7 +36,6 @@ plot_statis_phase2_chart <- function(phase2_result,
   if (!"Status" %in% colnames(df2)) {
     df2$Status <- ifelse(df2$T2_Stat > phase2_result$threshold, "Out of Control", "Under Control")
   }
-
 
   df2 <- df2[, c("Batch", "T2_Stat", "Status")]
   df2$Batch <- forcats::fct_inorder(df2$Batch)

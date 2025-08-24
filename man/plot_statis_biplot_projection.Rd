@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_statis_biplot_projection.R
 \name{plot_statis_biplot_projection}
 \alias{plot_statis_biplot_projection}
-\title{HJ-Biplot Projection - Robust STATIS Dual (phase 2)}
+\title{HJ-Biplot Projection - Robust STATIS Dual (Phase 2)}
 \usage{
 plot_statis_biplot_projection(phase1_result, phase2_result, dims = c(1, 2))
 }
@@ -28,9 +28,9 @@ decomposed via an eigen decomposition (not a rectangular SVD). The square roots
 of eigenvalues are used to build the biplot scaling, consistent with robust STATIS Dual.
 }
 \examples{
-datos <- simulate_pharma_batches()
-phase1_data <- subset(datos, Fase == "Fase 1" & Status == "Under Control")
-phase2_data <- subset(datos, Fase == "Fase 2")
+sim_batches <- simulate_pharma_batches()
+phase1_data <- subset(sim_batches, Phase == "Phase 1" & Status == "Under Control")
+phase2_data <- subset(sim_batches, Phase == "Phase 2")
 
 phase1 <- robust_statis_phase1(
   data = phase1_data,

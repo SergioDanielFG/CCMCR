@@ -3,7 +3,7 @@
 #' Launches an interactive Shiny dashboard that includes:
 #' - Phase 1 control chart (sum of robust Mahalanobis distances)
 #' - Phase 2 control chart (for new batches)
-#' - GH-Biplot visualization
+#' - HJ-Biplot visualization
 #'
 #' @export
 #'
@@ -15,21 +15,20 @@
 run_statis_dashboard <- function() {
   app_dir <- system.file("shiny", "full_panel_app.R", package = "robustT2")
   if (app_dir == "") {
-    stop("Shiny app script not found. Did you forget to install the package with inst/shiny?")
+    stop("Shiny app script not found. Did you include inst/shiny/full_panel_app.R in the package?")
   }
 
-  # Crea un nuevo entorno para cargar el app
+  # Create a new environment to load the app into
   app_env <- new.env()
   sys.source(app_dir, envir = app_env)
 
-  # Verifica si el objeto 'app' fue definido
+  # Check that the 'app' object was defined
   if (!exists("app", envir = app_env)) {
     stop("Object 'app' not found in loaded app script.")
   }
 
-  # Ejecuta la app desde el entorno
+  # Run the app from that environment
   shiny::runApp(app_env$app)
 }
 
 utils::globalVariables("app")
-

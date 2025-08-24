@@ -4,10 +4,10 @@
 \alias{simulate_pharma_batches}
 \title{Simulate Pharmaceutical Manufacturing Batches (Realistic Variability)}
 \usage{
-simulate_pharma_batches(obs_por_lote = 30, seed = 780)
+simulate_pharma_batches(obs_per_batch = 30, seed = 780)
 }
 \arguments{
-\item{obs_por_lote}{Integer. Number of observations per batch. Default is 30.}
+\item{obs_per_batch}{Integer. Number of observations per batch. Default is 30.}
 
 \item{seed}{Optional integer. If provided, sets a random seed for reproducibility.}
 }
@@ -15,7 +15,7 @@ simulate_pharma_batches(obs_por_lote = 30, seed = 780)
 A data frame with 450 observations and the following columns:
 \describe{
 \item{Batch}{Factor. Batch identifier (Batch_1 to Batch_15).}
-\item{Fase}{Factor. Phase of the process: "Fase 1" or "Fase 2".}
+\item{Phase}{Factor. Phase of the process: "Phase 1" or "Phase 2".}
 \item{Status}{Factor. Control status: "Under Control" or "Out of Control".}
 \item{Concentration, Humidity, Dissolution, Density}{Numeric quality control variables.}
 }

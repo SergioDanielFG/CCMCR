@@ -23,13 +23,13 @@ Plots the robust Hotelling T² statistics for Phase 2 batches only,
 using the results from the robust STATIS Dual method.
 }
 \examples{
-datos <- simulate_pharma_batches()
+sim_batches <- simulate_pharma_batches()
 phase1 <- robust_statis_phase1(
-  data = subset(datos, Fase == "Fase 1" & Status == "Under Control"),
+  data = subset(sim_batches, Phase == "Phase 1" & Status == "Under Control"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 )
 phase2 <- robust_statis_phase2(
-  new_data = subset(datos, Fase == "Fase 2"),
+  new_data = subset(sim_batches, Phase == "Phase 2"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density"),
   medians = phase1$global_medians,
   mads = phase1$global_mads,

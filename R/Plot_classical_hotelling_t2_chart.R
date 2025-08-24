@@ -17,10 +17,10 @@
 #'
 #' @examples
 #' # Simulate pharmaceutical manufacturing batches
-#' datos <- simulate_pharma_batches()
+#' sim_batches <- simulate_pharma_batches()
 #'
 #' # Phase 1 analysis: use Phase 1 data
-#' phase1_data <- subset(datos, Fase == "Fase 1")
+#' phase1_data <- subset(sim_batches, Phase == "Phase 1")
 #'
 #' # Apply classical Hotelling T2 methodology
 #' t2_result <- hotelling_t2_phase1(
@@ -33,7 +33,6 @@
 #'   t2_statistics = t2_result$batch_statistics,
 #'   num_vars = 4
 #' )
-
 plot_classical_hotelling_t2_chart <- function(t2_statistics, num_vars,
                                               title = "Classical Hotelling T2 Control Chart") {
   chi_threshold <- qchisq(0.9973, df = num_vars)
@@ -43,19 +42,11 @@ plot_classical_hotelling_t2_chart <- function(t2_statistics, num_vars,
   g <- ggplot(t2_statistics, aes(x = Batch, y = T2_Stat, group = 1)) +
     geom_point(size = 3, color = "#00C8D7") +
     geom_line(linewidth = 0.8, color = "#00C8D7") +
-
-    # Labels for batches
-    geom_text(
-      aes(label = round(T2_Stat, 1)),
-      vjust = -0.8, size = 3.2, show.legend = FALSE
-    ) +
-
+    geom_text(aes(label = round(T2_Stat, 1)), vjust = -0.8, size = 3.2, show.legend = FALSE) +
     geom_hline(yintercept = chi_threshold, linetype = "dashed", color = "red", linewidth = 0.8) +
-    annotate("text",
-             x = Inf, y = chi_threshold,
+    annotate("text", x = Inf, y = chi_threshold,
              label = paste0("UCL = ", round(chi_threshold, 1)),
              hjust = 1.1, vjust = -0.5, color = "red", size = 4) +
-
     labs(
       title = title,
       x = "Batch",

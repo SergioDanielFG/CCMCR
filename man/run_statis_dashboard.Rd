@@ -11,7 +11,7 @@ Launches an interactive Shiny dashboard that includes:
 \itemize{
 \item Phase 1 control chart (sum of robust Mahalanobis distances)
 \item Phase 2 control chart (for new batches)
-\item GH-Biplot visualization
+\item HJ-Biplot visualization
 }
 }
 \examples{

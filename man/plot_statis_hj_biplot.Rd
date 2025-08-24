@@ -29,9 +29,9 @@ from robust STATIS Dual. Individuals (batch centers) are projected as G = U D,
 and variables as H = V D, where D is the diagonal matrix of square roots of eigenvalues.
 }
 \examples{
-datos <- simulate_pharma_batches()
+sim_batches <- simulate_pharma_batches()
 phase1 <- robust_statis_phase1(
-  data = subset(datos, Fase == "Fase 1" & Status == "Under Control"),
+  data = subset(sim_batches, Phase == "Phase 1" & Status == "Under Control"),
   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 )
 plot_statis_hj_biplot(phase1)

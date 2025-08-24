@@ -17,11 +17,11 @@
 #'
 #' @examples
 #' # Simulate pharmaceutical manufacturing batches
-#' datos <- simulate_pharma_batches()
+#' sim_batches <- simulate_pharma_batches()
 #'
 #' # Split by phase
-#' phase1_data <- subset(datos, Fase == "Fase 1")
-#' phase2_data <- subset(datos, Fase == "Fase 2")
+#' phase1_data <- subset(sim_batches, Phase == "Phase 1")
+#' phase2_data <- subset(sim_batches, Phase == "Phase 2")
 #'
 #' # Fit Phase 1 classical estimators
 #' t2_phase1 <- hotelling_t2_phase1(
@@ -46,7 +46,6 @@
 #'   t2_statistics = t2_phase2_plot,
 #'   num_vars = 4
 #' )
-
 plot_classical_hotelling_t2_phase2_chart <- function(t2_statistics, num_vars,
                                                      title = "Classical Hotelling T2 Control Chart (Phase 2)") {
   chi_threshold <- qchisq(0.9973, df = num_vars)

@@ -27,11 +27,11 @@ Batches are color-coded by control status ("Under Control" = blue, "Out of Contr
 }
 \examples{
 # Simulate pharmaceutical manufacturing batches
-datos <- simulate_pharma_batches()
+sim_batches <- simulate_pharma_batches()
 
 # Split by phase
-phase1_data <- subset(datos, Fase == "Fase 1")
-phase2_data <- subset(datos, Fase == "Fase 2")
+phase1_data <- subset(sim_batches, Phase == "Phase 1")
+phase2_data <- subset(sim_batches, Phase == "Phase 2")
 
 # Fit Phase 1 classical estimators
 t2_phase1 <- hotelling_t2_phase1(

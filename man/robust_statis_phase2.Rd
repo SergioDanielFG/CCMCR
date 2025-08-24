@@ -41,17 +41,17 @@ Each batch is summarized using a robust Hotelling-type \( T^2 \) statistic.
 }
 \examples{
 # Simulate new pharmaceutical manufacturing batches
-datos <- simulate_pharma_batches()
+sim_batches <- simulate_pharma_batches()
 
 # Phase 1 analysis: use only Phase 1 and under control batches
-phase1_data <- subset(datos, Fase == "Fase 1" & Status == "Under Control")
+phase1_data <- subset(sim_batches, Phase == "Phase 1" & Status == "Under Control")
 phase1 <- robust_statis_phase1(
   data = phase1_data,
   variables = c("Concentration", "Humidity", "Dissolution", "Density")
 )
 
 # Phase 2 analysis: evaluate new batches (Phase 2)
-new_data <- subset(datos, Fase == "Fase 2")
+new_data <- subset(sim_batches, Phase == "Phase 2")
 result_phase2 <- robust_statis_phase2(
   new_data = new_data,
   variables = c("Concentration", "Humidity", "Dissolution", "Density"),
