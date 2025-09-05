@@ -11,7 +11,7 @@ The package provides:
 - Phase II monitoring using standardized Mahalanobis distances projected onto the compromise structure.  
 - Visualization tools through robust biplots (GH-Biplot and HJ-Biplot) and an interactive **Shiny dashboard**.  
 
-An internal dataset (`datos_farma`) is included for reproducibility and demonstration.
+An internal dataset (`pharma_data`) is included for reproducibility and demonstration.
 
 ---
 
