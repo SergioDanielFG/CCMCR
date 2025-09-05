@@ -1,28 +1,32 @@
 Package: robustT2
-Title: Robust Hotelling-Type T2 Control Chart Based on STATIS Dual
+Title: Robust Hotelling-Type T² Control Chart Based on the Dual STATIS Approach
 Version: 0.1.0
 Authors@R: c(
-    person("Sergio Daniel", "Frutos Galarza", , "sergio_dan88@hotmail.com", role = c("aut", "cre")),
-    person("Omar", "Ruiz Barzola", , "oruiz@espol.edu.ec", role = "aut"),
-    person("Purificación", "Galindo Villardón", , "pgalindo@usal.es", role = "aut")
+    person("Sergio Daniel", "Frutos Galarza", , "sergio_dan88@hotmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0009-0007-2961-032X")),
+    person("Omar", "Ruiz Barzola", , "oruiz@espol.edu.ec", role = "aut",
+           comment = c(ORCID = "0000-0001-8206-1744")),
+    person("Purificación", "Galindo Villardón", , "pgalindo@usal.es", role = "aut",
+           comment = c(ORCID = "0000-0001-6977-7545"))
   )
-Description: Implements a robust multivariate control chart methodology based on
-    the STATIS Dual approach to monitor batch-based industrial processes with
-    multiple correlated variables. A robust compromise covariance matrix is
-    constructed using Minimum Covariance Determinant (MCD) estimators from Phase I
-    batches, and a robust Hotelling-type T2 statistic is used for anomaly detection.
-    Phase II batches are evaluated via standardized Mahalanobis distances projected
-    onto the compromise structure. The package includes functions for simulating
-    contaminated and clean batches, applying robust and classical Hotelling T2 control
-    charts, and visualizing results through robust biplots (GH-biplot and projection)
-    and an interactive Shiny dashboard. An internal dataset ('datos_farma') is provided
-    for reproducibility.
+Description: Implements a robust multivariate control-chart methodology for
+    batch-based industrial processes with multiple correlated variables using the
+    Dual STATIS (Structuration des Tableaux A Trois Indices de la Statistique) framework.
+    A robust compromise covariance matrix is constructed from Phase I batches with the
+    Minimum Covariance Determinant (MCD) estimator, and a Hotelling-type T² statistic is
+    applied for anomaly detection in Phase II. The package includes functions to simulate
+    clean and contaminated batches, to compute both robust and classical Hotelling T²
+    control charts, to visualize results via robust biplots, and to launch an interactive
+    'shiny' dashboard. An internal dataset (pharma_data) is provided for reproducibility.
+    See Lavit, Escoufier, Sabatier and Traissac (1994) <doi:10.1016/0167-9473(94)90134-1>
+    for the original STATIS methodology, and Rousseeuw and Van Driessen (1999)
+    <doi:10.1080/00401706.1999.10485670> for the MCD estimator.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-Imports: 
+Imports:
     dplyr,
     MASS,
     ggplot2,
