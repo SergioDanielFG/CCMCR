@@ -6,7 +6,7 @@
 #' - HJ-Biplot visualization
 #'
 #' @export
-#'
+#' @return No return value, called for side effects (launches a Shiny application).
 #' @examples
 #' if (interactive()) {
 #'   run_statis_dashboard()

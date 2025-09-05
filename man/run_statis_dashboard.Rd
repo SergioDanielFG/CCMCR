@@ -6,6 +6,9 @@
 \usage{
 run_statis_dashboard()
 }
+\value{
+No return value, called for side effects (launches a Shiny application).
+}
 \description{
 Launches an interactive Shiny dashboard that includes:
 \itemize{
